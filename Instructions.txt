@@ -1,0 +1,80 @@
+1. Create a Project ( AMS - Apartment Management System)
+2. UI is next js project.
+3. Backend in python FastAPI MOngo db.
+4. Signle sign on methon. sigin or register redirect to localhost:3000 which already available.
+5. MongoDB connection is   mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/ and db: ams. create a collections needed.
+6. two types of UI. Admin and User. 
+7. admin sign in , he likes to enter monthly expenses, like, EB amount, month and year. and who had given this month and date and amount. 
+8. user sign in can see the Apartment expenses. whether they paid or not and which date they paid .
+9. on see the detils of the eb they can download the document. 
+10. they have docuemnts folder to chek all the doucents, can have download option
+
+
+Here's your corrected and enhanced version with added clarity and brief bullet points, suitable to give as input for an AI or development brief:
+
+---
+
+### **Project Overview: AMS (Apartment Management System)**
+
+1. **Create a Project:**
+   Build an **Apartment Management System (AMS)** to manage and track apartment-related expenses and payments.
+
+2. **Frontend (UI):**
+
+   * Use **Next.js** for building the user interface.
+   * Design two dashboards: **Admin UI** and **User UI**.
+
+3. **Backend:**
+
+   * Use **Python with FastAPI** for the backend.
+   * Use **MongoDB** as the database.
+
+4. **Authentication:**
+
+   * Implement **Single Sign-On (SSO)**.
+   * Sign-in or register should **redirect to `http://localhost:3000`**, which is already available.
+
+5. **MongoDB Setup:**
+
+   * Connection string:
+     `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+   * Database name: `ams`
+   * Create necessary collections:
+
+     * `users`
+     * `expenses`
+     * `payments`
+     * `documents`
+
+6. **User Interfaces:**
+
+   * **Admin UI** and **User UI**, each with their own features and access levels.
+
+7. **Admin Features:**
+
+   * Admin can log in and **enter monthly apartment expenses**, such as:
+
+     * **EB (Electricity Bill) amount**
+     * **Month and year**
+     * **Details of who has paid**, including **name, date, and amount paid**
+
+8. **User Features:**
+
+   * Users can log in to:
+
+     * **View apartment expenses**
+     * **See their payment status** (whether paid or not)
+     * **View payment date if paid**
+
+9. **Document Access:**
+
+   * Users can **view EB bill details** and have an option to **download the document**
+
+10. **Documents Section:**
+
+* Users can access a **"Documents" folder** that stores all uploaded files
+* Download option should be available for each file
+
+---
+
+Let me know if you’d like to include design mockups, API routes, or database schema details.

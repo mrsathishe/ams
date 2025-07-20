@@ -1,0 +1,80 @@
+
+
+### **Project Overview: AMS (Apartment Management System)**
+
+1. **Create a Project:**
+   Build an **Apartment Management System (AMS)** to manage and track apartment-related expenses and payments.
+
+2. **Frontend (UI):**
+
+   * Use **Next.js** for building the user interface.
+   * Design two dashboards: **Admin UI** and **User UI**.
+
+3. **Backend:**
+
+   * Use **Python with FastAPI** for the backend.
+   * Use **MongoDB** as the database.
+
+4. **Authentication:**
+
+   * Implement **Single Sign-On (SSO)**.
+   * Sign-in or register should **redirect to `http://localhost:3000`**, which is already available.
+
+5. **MongoDB Setup:**
+
+   * Connection string:
+     `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+   * Database name: `ams`
+   * Create necessary collections:
+
+     * `users`
+     * `expenses`
+     * `payments`
+     * `documents`
+
+6. **User Interfaces:**
+
+   * Two types of interfaces:
+
+     * **Admin Dashboard**
+     * **User Dashboard**
+
+7. **Admin Features:**
+
+   * Admin can log in and **enter monthly apartment expenses**, such as:
+
+     * **EB (Electricity Bill) amount**
+     * **Month and year**
+     * **Details of who has paid**, including **name, date, and amount paid**
+   * Admin can **view monthly and yearly expenses** through dynamic **charts** (e.g., bar or line charts)
+
+8. **User Features:**
+
+   * Users can log in to:
+
+     * **View apartment expenses**
+     * **See their payment status** (paid/unpaid)
+     * **View payment date** if paid
+     * **View monthly and yearly expense charts** to track apartment spending over time
+
+9. **Document Access:**
+
+   * Users can **view EB bill details** and **download the document** (PDF or image)
+
+10. **Documents Section:**
+
+* Users can access a **"Documents" folder** containing all uploaded files
+* Each file should have a **download option**
+
+11. **Charts & Reports:**
+
+* Add **Monthly and Yearly Expense Charts** using libraries like **Chart.js** or **Recharts** in both admin and user dashboards
+* Admin can **filter by month/year** and see total spending per category
+* Users can **visualize shared apartment expenses** over time for better awareness
+
+use folder structure like this 
+ams-project/
+├── frontend/   ← Next.js (Admin & User UI)
+├── backend/    ← FastAPI (APIs, MongoDB integration)
+├── README.md
+use this github rep : git@github.com:mrsathishe/ams.git
