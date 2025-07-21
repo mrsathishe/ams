@@ -1,8 +1,7 @@
 # AMS Setup and Usage Guide
 
 ## What's Running
-
-✅ **Backend API**: http://localhost:8001 (FastAPI)
+3. After successful registration, you'll be redirected to http://localhost:3001✅ **Backend API**: http://localhost:8001 (FastAPI)
 ✅ **Frontend**: http://localhost:3002 (Next.js)
 
 ## Current Setup Status
@@ -38,14 +37,14 @@ Open your browser and go to: http://localhost:3002
 
 You'll see the AMS landing page with two options:
 
-- **Sign In**: Redirects to http://localhost:3000 (external sign-in system)
+- **Sign In**: Redirects to http://localhost:3001 (external sign-in system)
 - **Register**: Creates a new user account in the AMS system
 
 ### 2. User Registration
 
 1. Click "Register" on the landing page
 2. Fill in your details (name, email, password)
-3. After successful registration, you'll be redirected to http://localhost:3000
+3. After successful registration, you'll be redirected to http://localhost:3001
 4. **Important**: New users are created with "user" role by default
 
 ### 3. Admin Setup

@@ -2,7 +2,7 @@
 
 export default function HomePage() {
   const handleNavigation = (path: string) => {
-    window.location.href = `http://localhost:3000/${path}`;
+    window.location.href = `http://localhost:3001/${path}`;
   };
 
   return (

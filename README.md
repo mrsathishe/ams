@@ -109,7 +109,7 @@ uvicorn main:app --reload
 ## Authentication
 
 - Single Sign-On (SSO) implementation
-- Redirects to `http://localhost:3000` after login/register
+- Redirects to `http://localhost:3001` after login/register
 
 ## GitHub Repository
 
