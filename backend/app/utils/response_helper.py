@@ -1,9 +1,9 @@
 from flask import jsonify
 
-def response(message, status="SUCCESS", data=None, status_code=200):
+def response(message, status=True, data=None, status_code=200):
     response = {
         "message": message,
-        "status": status
+        "status": "SUCCESS" if status else "FAILED"
     }
     if data:
         response["data"] = data

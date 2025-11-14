@@ -9,8 +9,9 @@ class User(Document):
     name = StringField(required=True, max_length=100)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
-    phone = StringField(required=True, validation=validate_phone)
+    phone = StringField(required=True, validation=validate_phone, unique=True)
     flat_number = StringField(required=True)
     building_name = StringField(required=True)
+    user_id = StringField(required=True, unique=True)
 
     meta = {'collection': 'users'}

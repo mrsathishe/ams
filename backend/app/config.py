@@ -13,12 +13,12 @@ class Config:
 
     # Replace placeholders in URI with actual username/password
     if base_uri and db_user and db_pass:
-        mongo_uri = base_uri.replace("<db_user_name>", db_user).replace("<db_password>", db_pass)
+        mongo_uri = base_uri.replace("<db_user_name>", db_user).replace("<db_password>", db_pass).replace("<db_name>",db_name)
     else:
         mongo_uri = f"mongodb://localhost:27017/{db_name}"  # fallback for local dev
-    print(mongo_uri)
+
     MONGODB_SETTINGS = {
-        "db": db_name,
+        # "db": db_name,
         "host": mongo_uri
     }
 

@@ -10,7 +10,7 @@ def register():
 
 @routes_bp.route('/login', methods=['POST'])
 def login():
-    return login_service.login_user()
+    return login_service.login_user(request.get_json())
 
 @routes_bp.route('/user', methods=['GET'])
 def user():
