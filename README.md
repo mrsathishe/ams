@@ -1,4 +1,4 @@
-# AMS (Apartment Management System)
+# AptSync (Apartment Management System)
 
 A comprehensive apartment management system to track expenses, payments, and documents.
 
