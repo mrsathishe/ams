@@ -1,6 +1,6 @@
 # from app import app
 from flask import request, Blueprint
-from app.services import refresh_service, login_service, user_service, logout_service, register_service
+from app.services import refresh_service, login_service, user_service, logout_service, register_service, update_password_service
 
 routes_bp = Blueprint("routes_bp", __name__)
 
@@ -23,3 +23,7 @@ def logout():
 @routes_bp.route('/refresh', methods=['POST'])
 def refresh_tokens():
     return refresh_service.refresh_user_tokens()
+
+@routes_bp.route('/updatePassword', methods=['POST'])
+def update_password():
+    return update_password_service.update_password(request.get_json())

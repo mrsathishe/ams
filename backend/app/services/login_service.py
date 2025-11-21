@@ -1,43 +1,40 @@
+import re
 from app.utils.response_helper import response
 from app.models.user_model import User
 from app.utils.password_helper import hash_password
+from app.schemas.login_schema import LoginSchema
+from marshmallow import ValidationError
+from app.constants import messages
 
 def login_user(request_data):
+    try:
+        data = LoginSchema().load(request_data)
+    except ValidationError as err:
+        return response(message="Validation errors", data=err.messages, status_code=400, status=False)
 
-    message = ''
-    status_code = 200
-    status = True
-    data = {}
-    print("email" not in request_data)
-    print("password" not in request_data)
-    print(request_data['email'] == '')
-    print(request_data['password'] == '')
-    if("email" not in request_data or "password" not in request_data or request_data['email'] == '' or request_data['password'] == ''):
-        print('inside if')
-        message = 'Invalid email or password'
-        status_code = 401
-        status = False
+    identifier = data['identifier']
+    password = data['password']
+
+    user = None
+    if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', identifier):
+        user = User.objects(email=identifier).first()
+    elif re.fullmatch(r'\d{10}', identifier):
+        user = User.objects(phone=identifier).first()
+
+    if user and user.password == hash_password(password):
+        # In a real application, generate a JWT token here
+        token = "some_generated_token"
+        return response(
+            message=messages.LOGIN_SUCCESSFUL,
+            data={
+                "user_id": str(user.id),
+                "token": token
+            },
+            status_code=200,
+            status=True
+        )
     else:
-        user = User.objects(email=request_data['email']).first()
-        print(f'user: ${user}')
-        if not user:
-            message = 'Invalid email or password'
-            status_code = 401
-            status = False
-        elif user.password == hash_password(request_data['password']):
-            message = 'User logged in successfully'
-            status_code = 401
-            status = False
-            data = {
-                'user': user,
-                'token': '1234567890' # replace with actual token
-            }
-        else:
-            message = 'Invalid email or password'
-            status_code = 401
-            status = False
-
-    return response(message=message, data=data, status_code=status_code, status=status)
+        return response(message=messages.INVALID_CREDENTIALS, status_code=401, status=False)
 
 
 # HTTP Status: 200 OK

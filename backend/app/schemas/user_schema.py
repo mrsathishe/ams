@@ -12,3 +12,4 @@ class UserSchema(Schema):
     phone = fields.Str(required=True, validate=validate_phone)
     flat_number = fields.Str(required=True)
     building_name = fields.Str(required=True)
+    user_id = fields.Str(required=False)

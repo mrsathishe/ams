@@ -1,5 +1,6 @@
 from app.utils.response_helper import response
 from app.models.user_model import User
+from app.constants import messages
 # from flask_jwt_extended import get_jwt_identity
 
 def get_user_details():
@@ -8,7 +9,7 @@ def get_user_details():
     user = User.objects(email=current_user_email).first()
 
     if not user:
-        return response('User not found', status_code=404)
+        return response(messages.USER_NOT_FOUND, status_code=404)
 
     user_data = {
         'name': user.name,
