@@ -7,14 +7,14 @@ echo "Starting AMS (Apartment Management System)..."
 # Start Backend
 echo "Starting FastAPI backend..."
 cd backend
-/usr/local/bin/python3.13 -m uvicorn main:app --reload --host 0.0.0.0 --port 8001 &
+source /bin/activate && python run.py &
 BACKEND_PID=$!
 
 # Wait a moment for backend to start
 sleep 3
 
 # Start Frontend
-echo "Starting Next.js frontend..."
+echo "Starting Vite frontend..."
 cd ../frontend
 npm run dev &
 FRONTEND_PID=$!
@@ -24,8 +24,8 @@ echo "Frontend PID: $FRONTEND_PID"
 
 echo ""
 echo "Services started successfully!"
-echo "Backend API: http://localhost:8001"
-echo "Frontend: http://localhost:3001"
+echo "Backend API: http://localhost:6000"
+echo "Frontend: http://localhost:5173"
 echo ""
 echo "To stop the services:"
 echo "kill $BACKEND_PID $FRONTEND_PID"

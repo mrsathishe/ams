@@ -66,7 +66,7 @@ chmod +x start.sh
 
 **Access the application:**
 
-- Frontend: http://localhost:3002
+- Frontend: http://localhost:5173
 - Backend API: http://localhost:8001
 - API Docs: http://localhost:8001/docs
 
@@ -101,7 +101,7 @@ uvicorn main:app --reload
 
 ## First Time Setup
 
-1. **Access**: Go to http://localhost:3002
+1. **Access**: Go to http://localhost:5173
 2. **Register**: Create your first user account
 3. **Admin Access**: Update user role to "admin" in MongoDB
 4. **Start Using**: Add expenses, record payments, upload documents
@@ -109,7 +109,7 @@ uvicorn main:app --reload
 ## Authentication
 
 - Single Sign-On (SSO) implementation
-- Redirects to `http://localhost:3001` after login/register
+- Redirects to `http://localhost:5173` after login/register
 
 ## GitHub Repository
 
