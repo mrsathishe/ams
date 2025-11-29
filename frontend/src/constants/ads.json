@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Smart Building Management",
+    "description": "Manage your entire apartment complex with AI-powered insights and automation.",
+    "image": "/api/placeholder/400/300",
+    "cta": "Learn More",
+    "color": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+  },
+  {
+    "id": 2,
+    "title": "Digital Payment Solutions",
+    "description": "Seamless rent collection, maintenance fees, and utility bill management.",
+    "image": "/api/placeholder/400/300",
+    "cta": "Get Started",
+    "color": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+  },
+  {
+    "id": 3,
+    "title": "Community Connect",
+    "description": "Build stronger communities with resident networking and communication tools.",
+    "image": "/api/placeholder/400/300",
+    "cta": "Join Community",
+    "color": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+  },
+  {
+    "id": 4,
+    "title": "Maintenance Made Easy", 
+    "description": "Report issues, track repairs, and schedule maintenance with just a few clicks.",
+    "image": "/api/placeholder/400/300",
+    "cta": "Try Now",
+    "color": "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+  },
+  {
+    "id": 5,
+    "title": "Security & Access Control",
+    "description": "Advanced security features with digital keys and visitor management.",
+    "image": "/api/placeholder/400/300",
+    "cta": "Secure Now",
+    "color": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+  }
+]

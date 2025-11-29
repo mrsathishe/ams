@@ -1,0 +1,248 @@
+{
+  "app": {
+    "name": "APTSYNC",
+    "tagline": "Manage Easy",
+    "description": "Simplifying apartment management with modern technology"
+  },
+  "register": {
+    "page": {
+      "title": "Create Account",
+      "description": "Join APTSYNC to manage your apartment easily",
+      "success": {
+        "message": "Registration successful! Redirecting to login...",
+        "redirect": "Registration successful! Please sign in with your credentials."
+      }
+    },
+    "sections": {
+      "personal": {
+        "title": "Personal Information",
+        "description": "Tell us about yourself"
+      },
+      "apartment": {
+        "title": "Apartment Details",
+        "description": "Information about your residence"
+      },
+      "security": {
+        "title": "Account Security",
+        "description": "Choose a strong password to protect your account"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Customize your experience"
+      }
+    },
+    "fields": {
+      "name": {
+        "label": "Full Name",
+        "placeholder": "Enter your full name"
+      },
+      "email": {
+        "label": "Email Address",
+        "placeholder": "Enter your email address"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "Enter your phone number",
+        "helper": "Required: For important notifications"
+      },
+      "apartmentName": {
+        "label": "Apartment Name / Project Name",
+        "placeholder": "e.g., Sunrise Apartments, Green Valley",
+        "helper": "Name of your apartment complex"
+      },
+      "buildingName": {
+        "label": "Building Name / Block Name",
+        "placeholder": "e.g., Sunrise Loza, Block B12",
+        "helper": "Name of your block complex"
+      },
+      "flatNumber": {
+        "label": "Flat Number",
+        "placeholder": "e.g., 101, A-23, B-4",
+        "helper": "Required"
+      },
+      "floor": {
+        "label": "Floor Number", 
+        "placeholder": "Floor number",
+        "helper": "Optional"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Create a strong password"
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm your password"
+      }
+    },
+    "buttons": {
+      "submit": "Create Account",
+      "loading": "Creating Account...",
+      "signin": "Sign in"
+    },
+    "links": {
+      "hasAccount": "Already have an account?"
+    },
+    "checkboxes": {
+      "notifications": {
+        "label": "Send me notifications and updates",
+        "description": "Get important updates about your apartment, payments, and maintenance schedules."
+      },
+      "remember": {
+        "label": "Remember me"
+      },
+      "terms": {
+        "text": "I agree to the",
+        "termsLink": "Terms of Service",
+        "andText": "and",
+        "privacyLink": "Privacy Policy"
+      }
+    },
+    "quickAccess": {
+      "title": "ACCESS QUICKLY",
+      "subtitle": "These options will be available in future",
+      "status": "Coming Soon",
+      "buttons": {
+        "google": "Google",
+        "linkedin": "LinkedIn", 
+        "sso": "SSO"
+      }
+    }
+  },
+  "login": {
+    "page": {
+      "title": "Sign in",
+      "description": "Sign in to continue"
+    },
+    "fields": {
+      "identifier": {
+        "label": "Email / Phone Number",
+        "placeholder": "Enter your email / phone number"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      }
+    },
+    "buttons": {
+      "submit": "Sign in",
+      "loading": "Signing in...",
+      "forgotPassword": "Forgot your password?"
+    },
+    "links": {
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "messages": {
+      "success": "Login successful! Welcome back!",
+      "error": "Invalid email or password"
+    }
+  },
+  "validation": {
+    "email": {
+      "required": "Email is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least 2 characters",
+      "invalid": "Name should contain only letters and spaces"
+    },
+    "password": {
+      "required": "Password is required",
+      "minLength": "Password must be at least 8 characters",
+      "complexity": "Password must contain uppercase, lowercase, number, and special character"
+    },
+    "confirmPassword": {
+      "required": "Please confirm your password",
+      "mismatch": "Passwords do not match"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "invalid": "Please enter a valid phone number"
+    },
+    "apartmentName": {
+      "invalid": "Please enter a valid apartment name"
+    },
+    "flatNumber": {
+      "required": "Flat number is required",
+      "invalid": "Please enter a valid flat number"
+    },
+    "floor": {
+      "invalid": "Floor number should be between 1 and 100"
+    },
+    "terms": {
+      "required": "You must agree to the Terms of Service and Privacy Policy"
+    }
+  },
+  "passwordStrength": {
+    "labels": {
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "text": "Password strength:",
+    "requirements": {
+      "length": "At least 8 characters",
+      "lowercase": "Contains lowercase letter",
+      "uppercase": "Contains uppercase letter",
+      "number": "Contains number",
+      "special": "Contains special character (@$!%*?&)"
+    }
+  },
+  "errors": {
+    "api": {
+      "emailExists": "An account with this email already exists.",
+      "badRequest": "Please check your input data for errors.",
+      "validationError": "Please check your input data for errors.",
+      "generic": "Registration failed. Please try again."
+    }
+  },
+  "header": {
+    "contact": {
+      "phone": "+91 - 97900 60943",
+      "email": "mrsathishe@gmail.com"
+    },
+    "profile": {
+      "editProfile": "Edit Profile",
+      "logout": "Logout"
+    }
+  },
+  "footer": {
+    "company": {
+      "description": "Simplifying apartment management with modern solutions for residents and administrators."
+    },
+    "sections": {
+      "contact": "Contact Us",
+      "quickLinks": "Quick Links",
+      "legal": "Legal"
+    },
+    "links": {
+      "home": "Home",
+      "dashboard": "Dashboard", 
+      "about": "About",
+      "features": "Features",
+      "pricing": "Pricing",
+      "support": "Support",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Policy"
+    },
+    "copyright": "© 2025 APTSYNC. All rights reserved.",
+    "builtWith": "Built with modern technology for better apartment management.",
+    "location": "Bengaluru, Karnataka"
+  },
+  "navigation": {
+    "routes": {
+      "home": "/",
+      "login": "/login",
+      "register": "/register",
+      "dashboard": "/dashboard",
+      "admin": "/admin",
+      "profile": "/profile",
+      "about": "/about",
+      "terms": "/terms",
+      "privacy": "/privacy"
+    }
+  }
+}

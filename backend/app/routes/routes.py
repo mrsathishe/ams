@@ -1,8 +1,13 @@
 # from app import app
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from app.services import refresh_service, login_service, user_service, logout_service, register_service, update_password_service
 
 routes_bp = Blueprint("routes_bp", __name__)
+
+@routes_bp.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+@routes_bp.route('/<path:path>', methods=['OPTIONS'])
+def handle_options(path):
+    return jsonify({'status': 'ok'}), 200
 
 @routes_bp.route('/register', methods=['POST'])
 def register():

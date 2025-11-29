@@ -12,7 +12,7 @@ import type {
 } from "../types";
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,14 +32,9 @@ export const authAPI = {
   login: async (
     credentials: LoginCredentials
   ): Promise<{ access_token: string; token_type: string }> => {
-    const formData = new FormData();
-    formData.append("username", credentials.username);
-    formData.append("password", credentials.password);
-
-    const response = await api.post("/token", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const response = await api.post("/login", {
+      identifier: credentials.username,
+      password: credentials.password,
     });
     return response.data;
   },

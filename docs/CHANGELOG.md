@@ -1,6 +1,6 @@
 # CHANGELOG
 
-This document tracks all implementations, changes, and updates made to the AMS (Apartment Management System) project.
+This document tracks all implementations, changes, and updates made to the AptSync project.
 
 ## Table of Contents
 - [Project Status](#project-status)
@@ -16,20 +16,76 @@ This document tracks all implementations, changes, and updates made to the AMS (
 ## Project Status
 
 **Current Version**: Feature/auth_backend branch  
-**Last Updated**: November 26, 2025  
+**Last Updated**: November 27, 2025  
 **Status**: ✅ Development Ready
 
 ### Architecture Overview
-- **Frontend**: React + Vite + TypeScript (Port 5173)
-- **Backend**: Flask + MongoDB (Port 6000)  
+- **Frontend**: React 19.2.0 + Vite 7.2.4 + TypeScript 5.9.3 (Port 5173)
+- **Backend**: Flask 2.1.3 + MongoDB (Port 6000)  
 - **Database**: MongoDB Atlas
 - **Authentication**: JWT-based with refresh tokens
+- **State Management**: Zustand + TanStack React Query
+- **Styling**: Tailwind CSS + Styled Components hybrid
 
 ---
 
 ## Recent Changes
 
-### 2025-11-26 - Tailwind CSS v4 PostCSS Fix
+### 2025-11-27 - Documentation Accuracy Update
+
+#### 📝 Major Documentation Corrections
+- **Fixed Tech Stack Documentation**: Updated README.md and CHANGELOG.md to reflect actual implementation
+  - **Frontend**: Corrected from "Next.js" to "React 19.2.0 + Vite 7.2.4 + TypeScript"
+  - **Backend**: Clarified current Flask implementation vs documented FastAPI
+  - **State Management**: Added Zustand + TanStack React Query documentation
+  - **Styling**: Documented hybrid Tailwind CSS + Styled Components approach
+- **Port Corrections**: Updated backend port from 8001 to 6000 in all documentation
+- **Setup Instructions**: Corrected backend startup commands from uvicorn to python run.py
+
+#### 🔍 Actual vs Documented Technology Stack
+```
+Previously Documented → Actual Implementation
+Next.js               → React 19.2.0 + Vite 7.2.4
+FastAPI               → Flask 2.1.3 (with FastAPI backup in /bck_bk/)
+Port 8001             → Port 6000
+Tailwind only         → Tailwind + Styled Components
+Basic state mgmt      → Zustand + TanStack React Query
+```
+
+#### 📁 Files Updated
+- `README.md` - Complete tech stack overhaul
+- `docs/CHANGELOG.md` - Architecture overview updates
+- Added comprehensive dependency documentation
+
+### 2025-11-26 - UI Rebranding to AptSync
+
+#### 📝 Project Branding Updates
+- **Rebranded UI from "AMS" to "AptSync"** for better user experience
+- **Repository and database names remain "ams"** for consistency with existing infrastructure
+- **Updated user-facing text** to show "AptSync" branding
+- **Maintained backend compatibility** with existing database and URLs
+
+#### 📁 Files Updated
+```
+UI/Frontend Changes:
+- src/pages/LoginPage.tsx - "Sign in to AptSync"
+- src/pages/RegisterPage.tsx - "Join AptSync" 
+- src/pages/DashboardPage.tsx - "AptSync Dashboard"
+- docs/THEMING_GUIDE.md - Frontend references
+- package.json - Package name "aptsync-frontend"
+
+Infrastructure Maintained:
+- GitHub Repository: github.com/mrsathishe/ams (unchanged)
+- Database Name: "ams" (unchanged)
+- Project folder: /ams (unchanged)
+```
+
+#### 🎯 **Approach**: UI Rebranding Only
+- ✅ **User Experience**: Modern "AptSync" branding in UI
+- ✅ **Infrastructure**: Existing "ams" database and repo maintained
+- ✅ **Backwards Compatibility**: All existing data and connections preserved
+
+### 2025-11-26 - Tailwind CSS v4 PostCSS Fix (Previous)
 
 #### 🐛 Bug Fixes
 - **Fixed Tailwind CSS PostCSS Configuration**: Updated to use `@tailwindcss/postcss` plugin

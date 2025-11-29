@@ -19,9 +19,11 @@ AptSync is an apartment management system with a Flask backend and React (Vite) 
 **Frontend (React + Vite + TypeScript)**
 - `frontend/src/pages/` - Route components (Home, Login, Register, Dashboard, Admin, Profile)
 - `frontend/src/lib/` - API client, authentication context, and auth hooks
-- `frontend/src/components/` - Reusable UI components
-- `frontend/src/Router.tsx` - React Router configuration
-- Uses Tailwind CSS, Chart.js, and React Hook Form
+- `frontend/src/components/` - Reusable UI components including styled components
+- `frontend/src/stores/` - Zustand state management
+- `frontend/src/hooks/` - Custom React hooks
+- `frontend/src/Router.tsx` - React Router DOM 7.x configuration
+- Uses Tailwind CSS + Styled Components, Chart.js, React Hook Form, TanStack React Query
 
 ## Development Commands
 
@@ -59,7 +61,8 @@ npm run lint         # ESLint
 - JWT-based authentication with access and refresh tokens
 - Services: login, register, logout, refresh, update_password
 - Protected routes use JWT validation
-- Frontend uses React Context for auth state management
+- Frontend uses React Context + Zustand for auth state management
+- TanStack React Query handles API calls and caching
 
 ## Key Files to Understand
 
@@ -67,16 +70,18 @@ npm run lint         # ESLint
 - `backend/app/routes/routes.py` - All API endpoints
 - `frontend/src/lib/api.ts` - API client configuration
 - `frontend/src/lib/useAuth.ts` - Authentication hook
+- `frontend/src/stores/` - Zustand state stores
+- `frontend/package.json` - Dependencies including React 19.2.0, Vite 7.2.4, Zustand 5.0.8
 - `start.sh` - Development startup script
 
 ## Port Configuration
 
 - Backend API: http://localhost:6000
-- Frontend: http://localhost:5173  
-- API Documentation: http://localhost:6000/docs (if using FastAPI, but currently Flask)
+- Frontend: http://localhost:5173
 
 ## Project Structure Notes
 
 - The `nextjs_bk/` directory contains old Next.js code (backup)
 - Current frontend uses Vite + React Router instead of Next.js
-- The `bck_bk/` and `old/` directories contain legacy code
+- The `bck_bk/` directory contains FastAPI backend implementation (alternative to current Flask)
+- The `old/` directories contain legacy code

@@ -1,6 +1,6 @@
-# Frontend (Vite + React + TypeScript)
+# Frontend (Vite + React + TypeScript + Styled Components)
 
-This is the frontend for the Apartment Management System, built with Vite, React, and TypeScript.
+This is the frontend for the APTSYNC Apartment Management System, built with modern React architecture using Vite, TypeScript, and Styled Components.
 
 ## Development Setup
 
@@ -32,119 +32,190 @@ The application will be available at `http://localhost:5173`.
 
 ## Project Structure
 
--   `src/`: Contains the main source code for the application.
-    -   `components/`: Reusable React components.
-    -   `lib/`: Contains the authentication logic and API client.
-    -   `pages/`: Page components for each route.
-    -   `types/`: TypeScript type definitions.
-    -   `App.tsx`: The main application component.
-    -   `main.tsx`: The entry point of the application.
-    -   `Router.tsx`: Defines the application's routes.
--   `public/`: Static assets.
--   `tailwind.config.js`: Tailwind CSS configuration.
--   `vite.config.ts`: Vite configuration.
+The project follows a modular architecture with component-based organization:
+
+```
+src/
+├── components/          # Shared/global components
+│   ├── Header.tsx      # Main navigation header with profile dropdown
+│   └── ui/             # Basic UI components (legacy, being refactored)
+├── pages/              # Page-specific modules
+│   ├── register/       # Registration page module
+│   │   ├── components/ # Page-specific components
+│   │   ├── styles.ts   # Page-specific styled components
+│   │   └── index.tsx   # Main page component
+│   ├── login/          # Login page module
+│   ├── dashboard/      # Dashboard page module
+│   │   ├── components/ # Dashboard-specific components
+│   │   │   ├── StatsCard.tsx
+│   │   │   ├── RecentActivity.tsx
+│   │   │   └── Sidebar.tsx
+│   │   ├── styles.ts
+│   │   └── index.tsx
+│   └── [other-pages]/
+├── styles/             # Shared styling system
+│   └── shared.ts       # Common styled components and themes
+├── lib/                # Utilities and business logic
+│   ├── api.ts          # API client
+│   ├── auth.tsx        # Authentication context
+│   └── useAuth.ts      # Authentication hook
+├── types/              # TypeScript type definitions
+├── App.tsx             # Main application component
+├── main.tsx            # Entry point
+└── Router.tsx          # Application routing
+```
+
+## Architecture Overview
+
+### Component-Based Architecture
+
+- **Pages**: Each page is a self-contained module with its own components and styles
+- **Components**: Reusable UI components shared across pages
+- **Styles**: Centralized styling system using Styled Components
+- **Types**: Comprehensive TypeScript typing for type safety
+
+### Styling System
+
+The application uses **Styled Components** with a shared theming system:
+
+- `src/styles/shared.ts` - Common styled components (forms, buttons, layouts)
+- Page-specific styles in each page's `styles.ts` file
+- Consistent design system with gradients, shadows, and animations
+
+### Key Features
+
+- **Modern UI/UX**: Glass-morphism design with smooth animations
+- **Responsive Design**: Mobile-first approach with responsive breakpoints
+- **Type Safety**: Full TypeScript coverage for reliability
+- **Modular Components**: Reusable and maintainable component architecture
+- **Professional Header**: Contact information, branding, and user profile management
 
 ## Available Scripts
 
--   `npm run dev`: Starts the development server.
--   `npm run build`: Builds the application for production.
--   `npm run lint`: Lints the code.
--   `npm run preview`: Serves the production build locally.
+-   `npm run dev`: Starts the development server
+-   `npm run build`: Builds the application for production (TypeScript + Vite)
+-   `npm run lint`: Lints the code using ESLint
+-   `npm run lint:fix`: Automatically fixes linting issues
+-   `npm run format`: Formats code using Prettier
+-   `npm run format:check`: Checks code formatting
+-   `npm run type-check`: Type checks without building
+-   `npm run test`: Runs Vitest tests
+-   `npm run test:ui`: Runs tests with UI
+-   `npm run test:e2e`: Runs Playwright end-to-end tests
+-   `npm run preview`: Serves the production build locally
 
 ## Routes
 
 The application has the following routes:
 
--   `/`: The home page, which provides options to sign in or register.
--   `/login`: The login page for existing users.
--   `/register`: The registration page for new users.
--   `/dashboard`: The user dashboard, which displays expenses and payment status.
--   `/admin`: The admin dashboard, which allows for expense management.
+-   `/`: The home page with landing content
+-   `/login`: User authentication page with modern form design
+-   `/register`: User registration with comprehensive form validation
+-   `/dashboard`: User dashboard with statistics, activity feed, and quick actions
+-   `/admin`: Admin dashboard for expense management
+-   `/profile`: User profile management
+
+## UI Components
+
+### Shared Components (`src/styles/shared.ts`)
+
+- **Layout**: `PageContainer`, `FormWrapper`, `Card`, `CardHeader`, `CardContent`
+- **Forms**: `Form`, `FormGroup`, `Label`, `Input`, `Button`, `Checkbox`
+- **Feedback**: `ErrorMessage`
+- **Interactive**: `ButtonGrid`, `QuickAccessSection`
+
+### Page-Specific Components
+
+#### Dashboard (`src/pages/dashboard/components/`)
+- **StatsCard**: Statistics display with variants (primary, success, warning)
+- **RecentActivity**: Activity feed with status indicators
+- **Sidebar**: Quick actions and monthly summary
+
+#### Register/Login (`src/pages/register/components/`)
+- **FormField**: Reusable form input component
+- **QuickAccessButtons**: Social authentication buttons
+- **RememberMeCheckbox**: Custom checkbox component
 
 ## API Connections
 
-The frontend communicates with a backend API. The API client is defined in `src/lib/api.ts`. The base URL for the API is `/api`, which is proxied to `http://localhost:8001` by the Vite development server.
+The frontend communicates with a backend API. The API client is defined in `src/lib/api.ts`. The base URL for the API is `/api`, which is proxied to `http://localhost:6000` by the Vite development server.
 
 ### Authentication (`authAPI`)
 
 -   **Login**: `authAPI.login(credentials)`
-    -   **Description**: Authenticates a user and returns a JWT.
+    -   **Description**: Authenticates a user and returns a JWT
     -   **Endpoint**: `POST /token`
-    -   **Payload (`LoginCredentials`)**: `FormData` with `username` (string, email) and `password` (string).
+    -   **Payload (`LoginCredentials`)**: `FormData` with `username` (string, email) and `password` (string)
     -   **Response**: `{ "access_token": "...", "token_type": "bearer" }`
-    -   **Used in**: `src/lib/auth.tsx` (called by `src/pages/LoginPage.tsx` via `useAuth` hook).
+    -   **Used in**: Authentication context and login page
+
 -   **Register**: `authAPI.register(data)`
-    -   **Description**: Creates a new user account.
+    -   **Description**: Creates a new user account
     -   **Endpoint**: `POST /register`
-    -   **Payload (`RegisterData`)**: JSON object with `email` (string), `name` (string), and `password` (string).
-    -   **Response**: The created `User` object.
-    -   **Used in**: `src/pages/RegisterPage.tsx`.
+    -   **Payload (`RegisterData`)**: JSON object with `email`, `name`, `password`, and `role`
+    -   **Response**: The created `User` object
+    -   **Used in**: Registration page
+
 -   **Get Current User**: `authAPI.getCurrentUser()`
-    -   **Description**: Fetches the details of the currently authenticated user.
+    -   **Description**: Fetches the details of the currently authenticated user
     -   **Endpoint**: `GET /users/me`
-    -   **Headers**: Requires a valid JWT in the `Authorization` header.
-    -   **Response**: The current `User` object.
-    -   **Used in**: `src/lib/auth.tsx` (to initialize auth state).
+    -   **Headers**: Requires a valid JWT in the `Authorization` header
+    -   **Response**: The current `User` object
+    -   **Used in**: Authentication context initialization
 
 ### Expenses (`expensesAPI`)
 
 -   **Get Expenses**: `expensesAPI.getExpenses(month, year)`
-    -   **Description**: Retrieves a list of expenses, optionally filtered by month and year.
-    -   **Endpoint**: `GET /expenses`
-    -   **Query Parameters**: `month` (number, optional), `year` (number, optional).
-    -   **Response**: An array of `ExpenseWithPayments` objects.
-    -   **Used in**: `src/pages/DashboardPage.tsx`, `src/pages/AdminPage.tsx`.
 -   **Get Expense**: `expensesAPI.getExpense(id)`
-    -   **Description**: Retrieves a single expense by its ID.
-    -   **Endpoint**: `GET /expenses/{id}`
-    -   **Response**: A single `ExpenseWithPayments` object.
-    -   **Used in**: Not currently used in any component.
 -   **Create Expense**: `expensesAPI.createExpense(expense)`
-    -   **Description**: Creates a new expense record.
-    -   **Endpoint**: `POST /expenses`
-    -   **Payload (`Omit<Expense, "id" | "created_at" | "created_by">`)**: JSON object with `amount` (number), `month` (number), `year` (number), `expense_type` (string), and `description` (string, optional).
-    -   **Response**: The created `Expense` object.
-    -   **Used in**: `src/pages/AdminPage.tsx`.
 
 ### Payments (`paymentsAPI`)
 
 -   **Create Payment**: `paymentsAPI.createPayment(payment)`
-    -   **Description**: Records a new payment for an expense.
-    -   **Endpoint**: `POST /payments`
-    -   **Payload (`Omit<Payment, "id" | "created_at">`)**: JSON object with `user_id` (string), `expense_id` (string), `amount` (number), `payment_date` (string), and `payment_method` (string, optional).
-    -   **Response**: The created `Payment` object.
-    -   **Used in**: Not currently used in any component (form is present in `AdminPage` but not wired up).
 -   **Get User Payments**: `paymentsAPI.getUserPayments(userId)`
-    -   **Description**: Retrieves all payments made by a specific user.
-    -   **Endpoint**: `GET /payments/user/{userId}`
-    -   **Response**: An array of `Payment` objects.
-    -   **Used in**: `src/pages/DashboardPage.tsx`.
 
 ### Documents (`documentsAPI`)
 
 -   **Get Documents**: `documentsAPI.getDocuments(month, year)`
-    -   **Description**: Retrieves a list of documents, optionally filtered by month and year.
-    -   **Endpoint**: `GET /documents`
-    -   **Query Parameters**: `month` (number, optional), `year` (number, optional).
-    -   **Response**: An array of `Document` objects.
-    -   **Used in**: Not currently used in any component.
--   **Upload Document**: `documentsAPI.uploadDocument(file, title, expenseId, month, year)`
-    -   **Description**: Uploads a new document.
-    -   **Endpoint**: `POST /documents/upload`
-    -   **Payload**: `FormData` with `file` (File), `title` (string), and optional `expense_id` (string), `month` (number), and `year` (number).
-    -   **Response**: The created `Document` object.
-    -   **Used in**: Not currently used in any component (form is present in `AdminPage` but not wired up).
+-   **Upload Document**: `documentsAPI.uploadDocument(...)`
 -   **Download Document**: `documentsAPI.downloadDocument(id)`
-    -   **Description**: Downloads a document file by its ID.
-    -   **Endpoint**: `GET /documents/{id}/download`
-    -   **Response**: The document file as a `Blob`.
-    -   **Used in**: Not currently used in any component.
 
 ### Analytics (`analyticsAPI`)
 
 -   **Get Expense Analytics**: `analyticsAPI.getExpenseAnalytics(year)`
-    -   **Description**: Retrieves aggregated expense and payment data for a given year.
-    -   **Endpoint**: `GET /analytics/expenses`
-    -   **Query Parameters**: `year` (number, optional).
-    -   **Response**: An object containing analytics data for the specified year.
-    -   **Used in**: `src/components/ExpenseCharts.tsx`.
+
+## Design System
+
+### Color Palette
+- **Primary**: Blue gradient (`#3b82f6` to `#1d4ed8`)
+- **Success**: Green (`#10b981`)
+- **Warning**: Orange (`#f59e0b`)
+- **Error**: Red (`#dc2626`)
+- **Neutrals**: Gray scale for text and backgrounds
+
+### Typography
+- **Headings**: Bold, modern font weights (600-700)
+- **Body**: Clean, readable text with proper contrast
+- **Interactive**: Medium weight (500) for buttons and links
+
+### Effects
+- **Glass-morphism**: Backdrop blur effects on cards and headers
+- **Smooth animations**: Hover states and micro-interactions
+- **Consistent shadows**: Elevated design with depth
+
+## Contact Information
+
+**APTSYNC - Manage Easy**
+
+📞 **Phone**: +91 - 97900 60943  
+📧 **Email**: mrsathishe@gmail.com
+
+Displayed in the application header for easy access.
+
+## Development Guidelines
+
+1. **Component Creation**: Use the page-specific component structure
+2. **Styling**: Leverage shared styled components for consistency
+3. **Type Safety**: Always define TypeScript interfaces for props
+4. **Reusability**: Create reusable components in the shared directory
+5. **Testing**: Write tests for critical components and user flows
