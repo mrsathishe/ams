@@ -1,7 +1,1 @@
-import styled from "styled-components";
-
-export const SignUpSection = styled.div`
-  text-align: center;
-  margin-top: 1.5rem;
-  color: #6b7280;
-`;
+// This file is no longer needed as styles have been moved to shared.ts

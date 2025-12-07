@@ -186,16 +186,14 @@ export const transformRegistrationData = (formData: FormData) => {
     name: formData.name.trim(),
     password: formData.password,
     phone: formData.phone.trim(),
-    apartment_name: formData.apartmentName.trim() || undefined,
-    building_name: formData.buildingName.trim() || undefined,
-    flat_number: formData.flatNumber.trim(),
-    floor_number: formData.floorNumber ? parseInt(formData.floorNumber) : undefined,
-    role: "user" as const,
-    profile_data: {
-      preferences: {
-        notifications: formData.subscribeToNotifications,
-        theme: "system" as const
-      }
+    apartmentName: formData.apartmentName.trim() || undefined,
+    buildingName: formData.buildingName.trim() || undefined,
+    flatNumber: formData.flatNumber.trim(),
+    floorNumber: formData.floorNumber ? parseInt(formData.floorNumber) : undefined,
+    subscribeToNotifications: formData.subscribeToNotifications,
+    locationDetails: {
+      apartmentId: formData.locationDetails?.apartmentId || '',
+      buildingId: formData.locationDetails?.buildingId || ''
     }
   };
 };

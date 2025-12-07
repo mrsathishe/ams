@@ -1,65 +1,12 @@
-import styled from "styled-components";
 import { calculatePasswordStrength, getStrengthLabel, getPasswordRequirements } from "@/utils/validation";
-
-const ProgressContainer = styled.div`
-  margin: 0.5rem 0;
-`;
-
-const ProgressBar = styled.div`
-  width: 100%;
-  height: 4px;
-  background: #e5e7eb;
-  border-radius: 2px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div<{ strength: number }>`
-  height: 100%;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-  width: ${props => (props.strength / 4) * 100}%;
-  background: ${props => {
-    if (props.strength <= 1) return '#dc2626'; // Weak - Red
-    if (props.strength <= 2) return '#f59e0b'; // Fair - Orange  
-    if (props.strength <= 3) return '#10b981'; // Good - Green
-    return '#059669'; // Strong - Dark Green
-  }};
-`;
-
-const RequirementsContainer = styled.div`
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  background: #f9fafb;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-`;
-
-const RequirementItem = styled.div<{ met: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  margin: 0.25rem 0;
-  color: ${props => props.met ? '#059669' : '#dc2626'};
-
-  &:before {
-    content: '${props => props.met ? '✓' : '✗'}';
-    font-weight: bold;
-    width: 1rem;
-  }
-`;
-
-const StrengthLabel = styled.div<{ strength: number }>`
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-top: 0.25rem;
-  color: ${props => {
-    if (props.strength <= 1) return '#dc2626';
-    if (props.strength <= 2) return '#f59e0b';
-    if (props.strength <= 3) return '#10b981';
-    return '#059669';
-  }};
-`;
+import {
+  ProgressContainer,
+  ProgressBar,
+  ProgressFill,
+  RequirementsContainer,
+  RequirementItem,
+  StrengthLabel
+} from "./styles";
 
 interface PasswordStrengthProps {
   password: string;

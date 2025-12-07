@@ -12,6 +12,12 @@ import {
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
 import { analyticsAPI } from "../lib/api";
+import {
+  ChartsContainer,
+  ChartCard,
+  ChartTitle,
+  LoadingContainer
+} from "./ExpenseCharts/styles";
 
 ChartJS.register(
   CategoryScale,
@@ -58,11 +64,11 @@ export default function ExpenseCharts({ year }: ExpenseChartsProps) {
   };
 
   if (isLoading) {
-    return <div className="p-4 text-center">Loading charts...</div>;
+    return <LoadingContainer>Loading charts...</LoadingContainer>;
   }
 
   if (!chartData) {
-    return <div className="p-4 text-center">No data available</div>;
+    return <LoadingContainer>No data available</LoadingContainer>;
   }
 
   const months = [
@@ -149,20 +155,16 @@ export default function ExpenseCharts({ year }: ExpenseChartsProps) {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">
-          Monthly Expenses (Bar Chart)
-        </h3>
+    <ChartsContainer>
+      <ChartCard>
+        <ChartTitle>Monthly Expenses (Bar Chart)</ChartTitle>
         <Bar data={barChartData} options={chartOptions} />
-      </div>
+      </ChartCard>
 
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">
-          Expense Trends (Line Chart)
-        </h3>
+      <ChartCard>
+        <ChartTitle>Expense Trends (Line Chart)</ChartTitle>
         <Line data={lineChartData} options={chartOptions} />
-      </div>
-    </div>
+      </ChartCard>
+    </ChartsContainer>
   );
 }

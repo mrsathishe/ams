@@ -8,6 +8,12 @@ def validate_phone(value):
 class ProfileDataSchema(Schema):
     preferences = fields.Dict(required=False)
 
+class LocationDetailsSchema(Schema):
+    country = fields.Str(required=False)
+    zipcode = fields.Str(required=False, validate=validate.Length(min=5, max=10))
+    state = fields.Str(required=False)
+    city = fields.Str(required=False)
+
 class UserSchema(Schema):
     name = fields.Str(required=True, validate=validate.Length(max=100))
     email = fields.Email(required=True)
@@ -16,8 +22,16 @@ class UserSchema(Schema):
     flat_number = fields.Str(required=True)
     apartment_name = fields.Str(required=False)
     building_name = fields.Str(required=False)
-    flat_number = fields.Str(required=False)
     floor_number = fields.Str(required=False)
     role = fields.Str(required=False, validate=validate.OneOf(["user", "admin"]), load_default="user")
     profile_data = fields.Nested(ProfileDataSchema, required=False)
     user_id = fields.Str(required=False)
+    
+    # Location fields
+    country = fields.Str(required=False)
+    zipcode = fields.Str(required=False, validate=validate.Length(min=5, max=10))
+    state = fields.Str(required=False)
+    city = fields.Str(required=False)
+    
+    # Notification preferences
+    subscribe_to_notifications = fields.Bool(required=False, load_default=True)

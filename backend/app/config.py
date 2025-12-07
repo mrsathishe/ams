@@ -23,3 +23,8 @@ class Config:
     }
 
     DEBUG = os.getenv("FLASK_DEBUG", "False").lower() == "true"
+    
+    # JWT Configuration
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
+    JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "86400"))  # 24 hours
+    JWT_REFRESH_TOKEN_EXPIRES = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "2592000"))  # 30 days

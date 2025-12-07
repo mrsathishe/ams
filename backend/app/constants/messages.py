@@ -3,6 +3,7 @@
 # General
 SOMETHING_WENT_WRONG = "Something went wrong. Please try again later."
 UNAUTHORIZED_ACCESS = "Unauthorized access."
+INTERNAL_SERVER_ERROR = "Internal server error occurred."
 
 # User
 USER_NOT_FOUND = "User not found."

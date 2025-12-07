@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/contexts/ToastContext";
 import Header from "@/components/Header";
-import FormField from "./register/components/FormField";
+import FormField from "@/components/common/forms/FormField";
 import { MailIcon, UserIcon, PhoneIcon, LockIcon } from "@/components/icons";
 import {
   PageContainer,

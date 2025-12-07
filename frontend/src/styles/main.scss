@@ -1,84 +1,50 @@
 @use 'variables' as *;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  * {
-    box-sizing: border-box;
-  }
-  
-  html {
-    font-family: $font-family-primary;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-color: $white;
-    color: $gray-900;
-  }
-  
-  #root {
-    min-height: 100vh;
-  }
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
 }
 
-/* Components removed - use styled-components or Tailwind classes instead */
-
-@layer utilities {
-  /* Responsive Utilities */
-  .mobile-hidden {
-    @include mobile {
-      display: none;
-    }
-  }
-  
-  .mobile-full {
-    @include mobile {
-      width: 100%;
-    }
-  }
-  
-  .tablet-hidden {
-    @include tablet {
-      display: none;
-    }
-  }
-  
-  .desktop-hidden {
-    @include desktop {
-      display: none;
-    }
-  }
+html {
+  font-family: $font-family-primary;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Keyframe animations moved to Tailwind config */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: $white;
+  color: $gray-900;
+}
+
+#root {
+  min-height: 100vh;
+}
 
 /* Responsive Utilities */
-@include mobile {
-  .mobile-hidden {
+.mobile-hidden {
+  @include mobile {
     display: none;
   }
-  
-  .mobile-full {
+}
+
+.mobile-full {
+  @include mobile {
     width: 100%;
   }
 }
 
-@include tablet {
-  .tablet-hidden {
+.tablet-hidden {
+  @include tablet {
     display: none;
   }
 }
 
-@include desktop {
-  .desktop-hidden {
+.desktop-hidden {
+  @include desktop {
     display: none;
   }
 }

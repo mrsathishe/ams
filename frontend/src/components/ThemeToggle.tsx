@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { StyledButton } from './styled/StyledComponents';
+import { ThemeLabel, CompactThemeButton } from './ThemeToggle/styles';
 
 interface ThemeToggleProps {
   className?: string;
@@ -41,9 +42,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
           <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
         </svg>
       )}
-      <span className="ml-2">
+      <ThemeLabel>
         {currentTheme === 'light' ? 'Dark' : 'Light'} Mode
-      </span>
+      </ThemeLabel>
     </StyledButton>
   );
 };
@@ -53,13 +54,12 @@ export const ThemeToggleIcon: React.FC<ThemeToggleProps> = ({ className }) => {
   const { currentTheme, toggleTheme } = useTheme();
 
   return (
-    <StyledButton 
+    <CompactThemeButton 
       variant="outline" 
       size="sm"
       onClick={toggleTheme}
       className={className}
       aria-label={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} mode`}
-      style={{ width: '40px', height: '40px', padding: '0' }}
     >
       {currentTheme === 'light' ? (
         <svg 
@@ -85,7 +85,7 @@ export const ThemeToggleIcon: React.FC<ThemeToggleProps> = ({ className }) => {
           <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
         </svg>
       )}
-    </StyledButton>
+    </CompactThemeButton>
   );
 };
 

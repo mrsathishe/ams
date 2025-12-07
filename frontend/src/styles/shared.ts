@@ -1,14 +1,17 @@
 import styled from "styled-components";
+import { SlCard, SlButton } from '@shoelace-style/shoelace/dist/react';
 
 // Common styled components for forms and layouts
 export const PageContainer = styled.div`
   min-height: calc(100vh - 161px);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   padding-top: 8rem;
+  gap: 1.5rem;
 `;
 
 export const ContentWrapper = styled.div`
@@ -27,27 +30,11 @@ export const ContentWrapper = styled.div`
 
 export const FormWrapper = styled.div`
   width: 100%;
-  max-width: 500px;
-  justify-self: end;
-  
-  @media (min-width: 768px) {
-    max-width: 600px;
-  }
-  
-  @media (min-width: 1024px) {
-    max-width: 700px;
-    justify-self: start;
-  }
-`;
-
-export const AdCarouselWrapper = styled.div`
-  width: 100%;
-  height: 600px;
-  justify-self: start;
-  
-  @media (max-width: 1024px) {
-    display: none;
-  }
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 `;
 
 export const Card = styled.div`
@@ -211,4 +198,30 @@ export const ButtonGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
+`;
+
+export const AuthSection = styled.div`
+  text-align: center;
+  color: #6b7280;
+  background: white;
+  border-radius: 1rem;
+`;
+
+export const AuthCard = styled(SlCard)`
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+`;
+
+export const TextButton = styled(SlButton)`
+  background: none;
+  border: none;
+  color: #3b82f6;
+  text-decoration: none;
+  padding: 0;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;

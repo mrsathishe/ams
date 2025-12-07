@@ -31,5 +31,9 @@ def create_app():
 
     from app.routes.routes import routes_bp
     app.register_blueprint(routes_bp, url_prefix="/api")
+    
+    # Register CLI commands
+    from app.commands import register_commands
+    register_commands(app)
 
     return app

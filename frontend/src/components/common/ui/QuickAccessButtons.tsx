@@ -1,49 +1,11 @@
-import styled from "styled-components";
-import { QuickAccessSection, QuickAccessTitle, ButtonGrid, Button } from "@/styles/shared";
+import React from "react";
+import { QuickAccessSection, QuickAccessTitle, ButtonGrid } from "@/styles/shared";
 import { REGISTER_CONSTANTS } from "@/constants";
-
-const DisabledInfo = styled.div`
-  text-align: center;
-  margin-bottom: 0.75rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-`;
-
-const StatusIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  background: #f59e0b;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.625rem;
-  font-weight: bold;
-`;
-
-const DisabledButton = styled(Button)`
-  opacity: 0.5;
-  cursor: not-allowed;
-  position: relative;
-  
-  &:hover {
-    transform: none;
-    box-shadow: none;
-  }
-  
-  &:after {
-    content: '🚧';
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    font-size: 0.75rem;
-  }
-`;
+import {
+  DisabledInfo,
+  StatusIcon,
+  DisabledButton
+} from "./styles";
 
 export default function QuickAccessButtons() {
   return (

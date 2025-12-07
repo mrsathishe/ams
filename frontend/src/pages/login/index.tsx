@@ -3,22 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/useAuth";
 import { useToast } from "@/contexts/ToastContext";
 import Header from "@/components/Header";
-import FormField from "../register/components/FormField";
-import QuickAccessButtons from "../register/components/QuickAccessButtons";
-import RememberMeCheckbox from "../register/components/RememberMeCheckbox";
-import { SignUpSection } from "./styles";
+import FormField from "@/components/common/forms/FormField";
+import QuickAccessButtons from "@/components/common/ui/QuickAccessButtons";
+import RememberMeCheckbox from "@/components/common/ui/RememberMeCheckbox";
+import AdCarousel from "@/components/common/AdCarousel";
+import AuthNavigation from "@/components/common/AuthNavigation";
 import { LOGIN_CONSTANTS, NAVIGATION_ROUTES } from "@/constants";
 import {
   PageContainer,
   FormWrapper,
-  Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
   Form,
   Button,
-  ErrorMessage
+  ErrorMessage,
+  AuthCard
 } from "@/styles/shared";
 
 export default function LoginPage() {
@@ -53,8 +54,14 @@ export default function LoginPage() {
     <>
       <Header variant="auth" />
       <PageContainer>
+        <AdCarousel />
         <FormWrapper>
-          <Card>
+          <AuthNavigation
+            text={LOGIN_CONSTANTS.links.noAccount}
+            buttonText={LOGIN_CONSTANTS.links.signUp}
+            onButtonClick={() => navigate(NAVIGATION_ROUTES.register)}
+          />
+          <AuthCard>
             <CardHeader>
               <CardTitle>{LOGIN_CONSTANTS.page.title}</CardTitle>
               <CardDescription>{LOGIN_CONSTANTS.page.description}</CardDescription>
@@ -109,17 +116,7 @@ export default function LoginPage() {
                 <QuickAccessButtons />
               </Form>
             </CardContent>
-          </Card>
-
-          <SignUpSection>
-            {LOGIN_CONSTANTS.links.noAccount}{" "}
-            <Button
-              variant="link"
-              onClick={() => navigate(NAVIGATION_ROUTES.register)}
-            >
-              {LOGIN_CONSTANTS.links.signUp}
-            </Button>
-          </SignUpSection>
+          </AuthCard>
         </FormWrapper>
       </PageContainer>
     </>
