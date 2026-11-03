@@ -8,6 +8,7 @@ import {
   LoginCredentials,
   RegisterData,
 } from "../types";
+import { AuthManager } from "./auth-manager";
 
 const API_BASE_URL = "http://localhost:8001";
 
@@ -20,12 +21,40 @@ const api = axios.create({
 
 // Add token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = AuthManager.getAuthToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+// Handle token expiration
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid, clear auth data
+      AuthManager.clearAuthUser();
+      window.location.href = "/";
+    }
+    return Promise.reject(error);
+  }
+);
+
+// User API
+export const userAPI = {
+  // Get current user details
+  getCurrentUser: async (): Promise<User> => {
+    const response: AxiosResponse<User> = await api.get("/users/me");
+    return response.data;
+  },
+
+  // Update user profile
+  updateProfile: async (userData: Partial<User>): Promise<User> => {
+    const response: AxiosResponse<User> = await api.put("/users/me", userData);
+    return response.data;
+  },
+};
 
 // Auth API
 export const authAPI = {

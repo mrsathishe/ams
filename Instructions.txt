@@ -2,7 +2,7 @@
 2. UI is next js project.
 3. Backend in python FastAPI MOngo db.
 4. Signle sign on methon. sigin or register redirect to localhost:3000 which already available.
-5. MongoDB connection is   mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/ and db: ams. create a collections needed.
+5. MongoDB connection should be configured in .env file (see .env.example for template) and db: ams. create a collections needed.
 6. two types of UI. Admin and User. 
 7. admin sign in , he likes to enter monthly expenses, like, EB amount, month and year. and who had given this month and date and amount. 
 8. user sign in can see the Apartment expenses. whether they paid or not and which date they paid .
@@ -37,7 +37,7 @@ Here's your corrected and enhanced version with added clarity and brief bullet p
 5. **MongoDB Setup:**
 
    * Connection string:
-     `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+     Configure MongoDB URI in `.env` file (see `.env.example` template)
    * Database name: `ams`
    * Create necessary collections:
 

@@ -23,7 +23,7 @@
 5. **MongoDB Setup:**
 
    * Connection string:
-     `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+     Configure MongoDB URI in `.env` file (see `.env.example` template)
    * Database name: `ams`
    * Create necessary collections:
 

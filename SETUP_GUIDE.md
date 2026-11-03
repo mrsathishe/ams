@@ -1,8 +1,9 @@
 # AMS Setup and Usage Guide
 
 ## What's Running
+
 3. After successful registration, you'll be redirected to http://localhost:3001✅ **Backend API**: http://localhost:8001 (FastAPI)
-✅ **Frontend**: http://localhost:3002 (Next.js)
+   ✅ **Frontend**: http://localhost:3002 (Next.js)
 
 ## Current Setup Status
 
@@ -58,7 +59,7 @@ To create an admin user, you have two options:
 
 The system connects to:
 
-- **Connection**: `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+- **Connection**: Configure in `.env` file (see `.env.example` for template)
 - **Database**: `ams`
 - **Collections**: `users`, `expenses`, `payments`, `documents`
 

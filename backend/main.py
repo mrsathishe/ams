@@ -81,6 +81,194 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/auth/exchange-token")
+async def exchange_external_token(token: str = Form(...)):
+    """
+    Exchange external authentication token for AMS token
+    """
+    from jose import jwt as jose_jwt
+    
+    try:
+        # Decode the external token (without verification for now)
+        # In production, you should verify the token with the external service's public key
+        payload = jose_jwt.get_unverified_claims(token)
+        
+        # Extract user information from the external token
+        user_id = payload.get("user_id") or payload.get("sub") or payload.get("id")
+        username = payload.get("username") or payload.get("email") or payload.get("preferred_username")
+        email = payload.get("email") or username
+        role = payload.get("role", "user")
+        
+        if not email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token: missing user email"
+            )
+        
+        # Check if user exists in our database
+        db = get_database()
+        existing_user = await db.users.find_one({"email": email})
+        
+        if existing_user:
+            # Update existing user
+            user_dict = {
+                "email": email,
+                "name": username or email,
+                "role": role,
+                "is_active": True,
+                "updated_at": datetime.utcnow()
+            }
+            await db.users.update_one(
+                {"email": email},
+                {"$set": user_dict}
+            )
+            existing_user.update(user_dict)
+            existing_user["id"] = str(existing_user["_id"])
+            user = User(**existing_user)
+        else:
+            # Create new user
+            user_dict = {
+                "email": email,
+                "name": username or email,
+                "role": role,
+                "is_active": True,
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            }
+            result = await db.users.insert_one(user_dict)
+            user_dict["id"] = str(result.inserted_id)
+            user = User(**user_dict)
+        
+        # Create AMS access token
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user.email}, expires_delta=access_token_expires
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": user
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Could not validate external token: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+@app.get("/debug/db-status")
+async def check_db_status():
+    """Debug endpoint to check database status"""
+    try:
+        db = get_database()
+        collections = await db.list_collection_names()
+        
+        result = {
+            "database_connected": True,
+            "collections": collections,
+            "collection_counts": {}
+        }
+        
+        for collection_name in collections:
+            count = await db[collection_name].count_documents({})
+            result["collection_counts"][collection_name] = count
+            
+        return result
+    except Exception as e:
+        return {
+            "database_connected": False,
+            "error": str(e)
+        }
+
+@app.post("/debug/init-db")
+async def initialize_database():
+    """Initialize database with sample data"""
+    try:
+        db = get_database()
+        
+        # Check if users exist
+        users_count = await db.users.count_documents({})
+        created_users = 0
+        
+        if users_count == 0:
+            sample_users = [
+                {
+                    "email": "admin@ams.com",
+                    "name": "AMS Admin",
+                    "role": "admin",
+                    "is_active": True,
+                    "created_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                },
+                {
+                    "email": "user1@ams.com", 
+                    "name": "User One",
+                    "role": "user",
+                    "is_active": True,
+                    "created_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                },
+                {
+                    "email": "test@example.com",
+                    "name": "Test User", 
+                    "role": "user",
+                    "is_active": True,
+                    "created_at": datetime.utcnow(),
+                    "updated_at": datetime.utcnow()
+                }
+            ]
+            
+            result = await db.users.insert_many(sample_users)
+            created_users = len(result.inserted_ids)
+        
+        # Check if expenses exist
+        expenses_count = await db.expenses.count_documents({})
+        created_expenses = 0
+        
+        if expenses_count == 0:
+            # Get admin user
+            admin_user = await db.users.find_one({"email": "admin@ams.com"})
+            if admin_user:
+                sample_expenses = [
+                    {
+                        "amount": 1500.0,
+                        "month": 7,
+                        "year": 2025,
+                        "expense_type": "EB",
+                        "description": "July Electricity Bill",
+                        "created_at": datetime.utcnow(),
+                        "created_by": str(admin_user["_id"])
+                    },
+                    {
+                        "amount": 2200.0,
+                        "month": 7,
+                        "year": 2025, 
+                        "expense_type": "Maintenance",
+                        "description": "Building Maintenance",
+                        "created_at": datetime.utcnow(),
+                        "created_by": str(admin_user["_id"])
+                    }
+                ]
+                
+                result = await db.expenses.insert_many(sample_expenses)
+                created_expenses = len(result.inserted_ids)
+        
+        return {
+            "success": True,
+            "created_users": created_users,
+            "created_expenses": created_expenses,
+            "total_users": await db.users.count_documents({}),
+            "total_expenses": await db.expenses.count_documents({})
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @app.get("/users/me", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user

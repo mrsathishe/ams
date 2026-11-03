@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "../../lib/auth";
+import { useRouter } from "next/navigation";
+import { AuthManager } from "../../lib/auth-manager";
 import { expensesAPI, paymentsAPI, documentsAPI } from "../../lib/api";
 import { ExpenseWithPayments, User } from "../../types";
 import ExpenseCharts from "../../components/ExpenseCharts";
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [user, setUser] = useState(AuthManager.getAuthUser());
   const [expenses, setExpenses] = useState<ExpenseWithPayments[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
@@ -27,10 +29,33 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    if (user && user.role === "admin") {
+    // Check authentication and admin role on component mount
+    const authUser = AuthManager.getAuthUser();
+    if (!authUser || !AuthManager.isAuthenticated()) {
+      router.push("/");
+      return;
+    }
+
+    // Check if user has admin role
+    const userRole = AuthManager.getUserRole();
+    if (userRole !== "admin") {
+      router.push("/dashboard"); // Redirect non-admin users to regular dashboard
+      return;
+    }
+
+    setUser(authUser);
+    fetchExpenses();
+  }, [router]);
+
+  useEffect(() => {
+    if (user) {
       fetchExpenses();
     }
   }, [user, selectedYear, selectedMonth]);
+
+  const handleLogout = () => {
+    AuthManager.logout();
+  };
 
   const fetchExpenses = async () => {
     try {
@@ -104,10 +129,15 @@ export default function AdminDashboard() {
               <h1 className="text-3xl font-bold text-gray-900">
                 Admin Dashboard
               </h1>
-              <p className="text-gray-600">Welcome, {user.name}</p>
+              <p className="text-gray-600">
+                Welcome, {user?.fullName || user?.username || "Admin"}
+                {user?.email && (
+                  <span className="text-sm text-gray-500"> ({user.email})</span>
+                )}
+              </p>
             </div>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
             >
               Logout

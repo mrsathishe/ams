@@ -9,7 +9,12 @@ db = Database()
 
 async def connect_to_mongo():
     """Create database connection"""
-    db.client = AsyncIOMotorClient(MONGODB_URL)
+    # Configure SSL for MongoDB Atlas
+    db.client = AsyncIOMotorClient(
+        MONGODB_URL,
+        tls=True,
+        tlsAllowInvalidCertificates=True  # For development only
+    )
     db.database = db.client[DATABASE_NAME]
     print(f"Connected to MongoDB database: {DATABASE_NAME}")
 

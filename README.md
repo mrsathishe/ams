@@ -46,7 +46,7 @@ ams-project/
 
 ## Database Setup
 
-- **Connection**: `mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/`
+- **Connection**: See `.env.example` for configuration template
 - **Database**: `ams`
 - **Collections**: `users`, `expenses`, `payments`, `documents`
 

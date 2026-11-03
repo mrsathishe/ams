@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # MongoDB Configuration
-MONGODB_URL = "mongodb+srv://sathish:Theheros%4009@user.wl4j0pk.mongodb.net/"
-DATABASE_NAME = "ams"
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017/")
+DATABASE_NAME = os.getenv("MONGODB_DB_NAME", "ams")
 
 # JWT Configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-here-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

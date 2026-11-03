@@ -34,7 +34,6 @@ export default function RegisterPage() {
         role: "user",
       });
 
-            
       // Redirect to localhost:3001 after successful registration
       window.location.href = "http://localhost:3001";
     } catch (err: any) {

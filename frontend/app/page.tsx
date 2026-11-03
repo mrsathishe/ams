@@ -2,7 +2,11 @@
 
 export default function HomePage() {
   const handleNavigation = (path: string) => {
-    window.location.href = `http://localhost:3001/${path}`;
+    const currentAppUrl = encodeURIComponent(
+      window.location.origin + "/auth/callback"
+    );
+    const targetUrl = `http://localhost:3000/${path}?callback=${currentAppUrl}`;
+    window.location.href = targetUrl;
   };
 
   return (
@@ -15,7 +19,7 @@ export default function HomePage() {
 
         <div className="space-y-4">
           <button
-            onClick={() => handleNavigation("signin")}
+            onClick={() => handleNavigation("login")}
             className="w-full flex justify-center py-3 px-4 border border-transparent text-lg font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition duration-200"
           >
             Sign In
