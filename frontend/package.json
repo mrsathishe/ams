@@ -3,32 +3,33 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "next": "14.0.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "@heroicons/react": "^2.0.18",
+    "@tailwindcss/forms": "^0.5.7",
+    "autoprefixer": "^10.4.16",
     "axios": "^1.6.0",
     "chart.js": "^4.4.0",
-    "react-chartjs-2": "^5.2.0",
     "date-fns": "^2.30.0",
-    "react-hook-form": "^7.47.0",
-    "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "@tailwindcss/forms": "^0.5.7",
-    "@heroicons/react": "^2.0.18"
+    "react": "^18",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18",
+    "react-hook-form": "^7.47.0",
+    "react-router-dom": "^7.18.5",
+    "tailwindcss": "^3.3.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^8",
-    "eslint-config-next": "14.0.0"
+    "typescript": "^5",
+    "vite": "^5.4.21"
   }
 }
