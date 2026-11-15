@@ -19,7 +19,7 @@ async def check_db_status():
         return {"database_connected": False, "error": str(e)}
 
 
-@app.post("/debug/init-db")
+@router.post("/init-db")
 async def initialize_database():
     """Initialize database with sample data"""
     try:

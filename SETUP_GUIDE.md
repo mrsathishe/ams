@@ -130,7 +130,7 @@ The FastAPI backend provides automatic API documentation at:
 
 ```bash
 cd backend
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 ### Frontend

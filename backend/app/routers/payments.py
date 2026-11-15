@@ -6,12 +6,14 @@ from app.services.payment_service import list_user_payments, record_payment
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 
+
 @router.post("", response_model=Payment)
 async def create_payment(
     payment: PaymentCreate,
     current_user: User = Depends(get_admin_user),
 ):
     return await record_payment(payment)
+
 
 @router.get("/user/{user_id}", response_model=List[Payment])
 async def get_user_payments(

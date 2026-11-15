@@ -11,6 +11,7 @@ from app.services.document_service import (
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
+
 @router.post("/upload", response_model=Document)
 async def upload_document(
     file: UploadFile = File(...),
@@ -29,6 +30,7 @@ async def upload_document(
         year=year,
     )
 
+
 @router.get("", response_model=List[Document])
 async def get_documents(
     month: Optional[int] = None,
@@ -36,6 +38,7 @@ async def get_documents(
     current_user: User = Depends(get_current_active_user),
 ):
     return await list_documents(month=month, year=year)
+
 
 @router.get("/{document_id}/download")
 async def download_document(
