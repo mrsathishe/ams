@@ -20,6 +20,8 @@ frontend/.next/
 frontend/out/
 backend/dist/
 backend/build/
+backend/.venv/
+*workspace
 
 # Runtime files
 *.log

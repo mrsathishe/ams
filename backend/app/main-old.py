@@ -1,3 +1,4 @@
+from app.core.logger import log_execution_time
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
@@ -8,10 +9,10 @@ import os
 import shutil
 from pathlib import Path
 
-from database import connect_to_mongo, close_mongo_connection, get_database
-from models import *
-from auth import *
-from config import FRONTEND_URL, ACCESS_TOKEN_EXPIRE_MINUTES, UPLOAD_DIR
+from app.core.database import connect_to_mongo, close_mongo_connection, get_database
+from app.models import *
+from app.services.auth import *
+from app.core.config import FRONTEND_URL, ACCESS_TOKEN_EXPIRE_MINUTES, UPLOAD_DIR
 
 # Create FastAPI app
 app = FastAPI(title="AMS API", description="Apartment Management System API", version="1.0.0")
@@ -44,6 +45,7 @@ async def root():
 
 # Authentication endpoints
 @app.post("/register", response_model=User)
+@log_execution_time
 async def register_user(user: UserCreate):
     db = get_database()
     
@@ -67,7 +69,9 @@ async def register_user(user: UserCreate):
     return User(**created_user)
 
 @app.post("/token", response_model=Token)
+@log_execution_time
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    print(f"Login attempt for user: {form_data.username}")
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(

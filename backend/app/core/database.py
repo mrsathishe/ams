@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import MONGODB_URL, DATABASE_NAME
+from app.core.config import MONGODB_URL, DATABASE_NAME
 
 class Database:
     client: AsyncIOMotorClient = None
@@ -10,12 +10,11 @@ db = Database()
 async def connect_to_mongo():
     """Create database connection"""
     # Configure SSL for MongoDB Atlas
-    db.client = AsyncIOMotorClient(
-        MONGODB_URL,
-        tls=True,
-        tlsAllowInvalidCertificates=True  # For development only
-    )
+    db.client = AsyncIOMotorClient(MONGODB_URL)
+    print("DEBUG MONGODB_URL:", repr(MONGODB_URL))
     db.database = db.client[DATABASE_NAME]
+
+    await db.client.admin.command("ping")
     print(f"Connected to MongoDB database: {DATABASE_NAME}")
 
 async def close_mongo_connection():

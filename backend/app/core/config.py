@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # MongoDB Configuration
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017/")
+MONGODB_URL = os.getenv("MONGODB_URL")
 DATABASE_NAME = os.getenv("MONGODB_DB_NAME", "ams")
 
 # JWT Configuration
