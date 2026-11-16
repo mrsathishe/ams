@@ -12,7 +12,9 @@ import {
   Flat,
   PendingApproval,
 } from "../types";
-const API_BASE_URL = "http://localhost:8000";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -81,6 +83,35 @@ export const authAPI = {
 
   getCurrentUser: async (): Promise<User> => {
     const response = await api.get("/users/me");
+    return response.data;
+  },
+
+  requestPasswordReset: async (
+    email: string,
+  ): Promise<{ message: string }> => {
+    const response = await api.post("/password-reset/request", { email });
+    return response.data;
+  },
+
+  resetPassword: async (
+    token: string,
+    newPassword: string,
+  ): Promise<{ message: string }> => {
+    const response = await api.post("/password-reset/confirm", {
+      token,
+      new_password: newPassword,
+    });
+    return response.data;
+  },
+
+  changePassword: async (
+    email: string,
+    newPassword: string,
+  ): Promise<{ message: string }> => {
+    const response = await api.post("/change-password", {
+      email,
+      new_password: newPassword,
+    });
     return response.data;
   },
 };

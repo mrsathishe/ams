@@ -3,9 +3,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth";
-import { apartmentsAPI } from "../../lib/api";
+import { apartmentsAPI, authAPI } from "../../lib/api";
 import { apiErrorMessage } from "../../lib/api-error";
 import { ApartmentRegistrationOption, RegisterData } from "../../types";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,8 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] =
+    useState(false);
   const [apartments, setApartments] = useState<ApartmentRegistrationOption[]>(
     [],
   );
@@ -85,6 +88,19 @@ export default function LoginPage() {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (email: string, newPassword: string) => {
+    try {
+      await authAPI.changePassword(email, newPassword);
+    } catch (err: unknown) {
+      throw new Error(
+        apiErrorMessage(
+          err,
+          "Failed to change password. Please check your email and try again.",
+        ),
+      );
     }
   };
 
@@ -303,12 +319,23 @@ export default function LoginPage() {
               </>
             )}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                {!isRegistering && (
+                  <button
+                    type="button"
+                    onClick={() => setShowChangePasswordModal(true)}
+                    className="text-sm text-emerald-600 transition-colors hover:text-emerald-700 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 rounded px-1"
+                  >
+                    Change password?
+                  </button>
+                )}
+              </div>
               <div className="mt-1 flex rounded-md border border-gray-300 focus-within:border-emerald-700 focus-within:ring-1 focus-within:ring-emerald-700">
                 <input
                   id="password"
@@ -377,6 +404,11 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        onSubmit={handleChangePassword}
+      />
     </div>
   );
 }

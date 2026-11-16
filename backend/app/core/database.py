@@ -23,6 +23,7 @@ async def connect_to_mongo():
         [("account_id", 1), ("period_start", 1), ("period_end", 1)], unique=True
     )
     await db.database.eb_payments.create_index("bill_id")
+    
     print("Connected to MongoDB")
 
 async def close_mongo_connection():
