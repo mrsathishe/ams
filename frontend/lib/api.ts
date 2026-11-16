@@ -1,15 +1,17 @@
 import axios, { AxiosResponse } from "axios";
 import {
   User,
-  Expense,
-  Payment,
-  Document,
-  ExpenseWithPayments,
+  Apartment,
+  ApartmentMember,
+  EBAccount,
+  EBBill,
+  EBPayment,
   LoginCredentials,
   RegisterData,
+  ApartmentRegistrationOption,
+  Flat,
+  PendingApproval,
 } from "../types";
-import { AuthManager } from "./auth-manager";
-
 const API_BASE_URL = "http://localhost:8001";
 
 const api = axios.create({
@@ -21,10 +23,16 @@ const api = axios.create({
 
 // Add token to requests
 api.interceptors.request.use((config) => {
-  const token = AuthManager.getAuthToken();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  const apartmentId =
+    typeof window !== "undefined"
+      ? localStorage.getItem("active_apartment_id")
+      : null;
+  if (apartmentId) config.headers["X-Apartment-ID"] = apartmentId;
   return config;
 });
 
@@ -33,12 +41,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid, clear auth data
-      AuthManager.clearAuthUser();
-      window.location.href = "/";
+      localStorage.removeItem("token");
+      if (window.location.pathname !== "/") window.location.assign("/");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // User API
@@ -48,18 +55,12 @@ export const userAPI = {
     const response: AxiosResponse<User> = await api.get("/users/me");
     return response.data;
   },
-
-  // Update user profile
-  updateProfile: async (userData: Partial<User>): Promise<User> => {
-    const response: AxiosResponse<User> = await api.put("/users/me", userData);
-    return response.data;
-  },
 };
 
 // Auth API
 export const authAPI = {
   login: async (
-    credentials: LoginCredentials
+    credentials: LoginCredentials,
   ): Promise<{ access_token: string; token_type: string }> => {
     const formData = new FormData();
     formData.append("username", credentials.username);
@@ -84,98 +85,99 @@ export const authAPI = {
   },
 };
 
-// Expenses API
-export const expensesAPI = {
-  getExpenses: async (
-    month?: number,
-    year?: number
-  ): Promise<ExpenseWithPayments[]> => {
-    const params = new URLSearchParams();
-    if (month) params.append("month", month.toString());
-    if (year) params.append("year", year.toString());
-
-    const response = await api.get(`/expenses?${params.toString()}`);
+export const apartmentsAPI = {
+  getRegistrationOptions: async (): Promise<ApartmentRegistrationOption[]> => {
+    const response = await api.get("/apartments/registration-options");
     return response.data;
   },
-
-  getExpense: async (id: string): Promise<ExpenseWithPayments> => {
-    const response = await api.get(`/expenses/${id}`);
+  getUserApartments: async (): Promise<Apartment[]> => {
+    const response = await api.get("/apartments");
     return response.data;
   },
-
-  createExpense: async (
-    expense: Omit<Expense, "id" | "created_at" | "created_by">
-  ): Promise<Expense> => {
-    const response = await api.post("/expenses", expense);
-    return response.data;
-  },
+  getFlats: async (apartmentId: string): Promise<Flat[]> =>
+    (await api.get(`/apartments/${apartmentId}/flats`)).data,
+  getMemberships: async (apartmentId: string): Promise<ApartmentMember[]> =>
+    (await api.get(`/apartments/${apartmentId}/memberships`)).data,
+  updatePermissions: async (
+    membershipId: string,
+    permissions: Partial<ApartmentMember["permissions"]>,
+  ) =>
+    (await api.patch(`/memberships/${membershipId}/permissions`, permissions))
+      .data,
+  updateFlatPolicy: async (
+    flatId: string,
+    policy: Flat["tenant_membership_approval"],
+  ) =>
+    (
+      await api.patch(
+        `/apartments/flats/${flatId}/membership-approval-policy`,
+        { tenant_membership_approval: policy },
+      )
+    ).data,
+  setIndividualEB: async (flatId: string, enabled: boolean) =>
+    (await api.patch(`/flats/${flatId}/individual-eb`, { enabled })).data,
+  requestChange: async (
+    apartmentId: string,
+    changes: { name?: string; total_flat_count?: number },
+  ) =>
+    (await api.post(`/apartments/${apartmentId}/change-requests`, changes))
+      .data,
+  getChanges: async (apartmentId: string) =>
+    (await api.get(`/apartments/${apartmentId}/change-requests`)).data,
 };
 
-// Payments API
-export const paymentsAPI = {
-  createPayment: async (
-    payment: Omit<Payment, "id" | "created_at">
-  ): Promise<Payment> => {
-    const response = await api.post("/payments", payment);
-    return response.data;
-  },
-
-  getUserPayments: async (userId: string): Promise<Payment[]> => {
-    const response = await api.get(`/payments/user/${userId}`);
-    return response.data;
-  },
+export const ebAPI = {
+  getAccounts: async (): Promise<EBAccount[]> =>
+    (await api.get("/eb-accounts")).data,
+  createAccount: async (data: {
+    account_type: "common" | "individual";
+    flat_id?: string;
+    name?: string;
+  }): Promise<EBAccount> => (await api.post("/eb-accounts", data)).data,
+  getBills: async (accountId: string): Promise<EBBill[]> =>
+    (await api.get(`/eb-accounts/${accountId}/bills`)).data,
+  createBill: async (
+    accountId: string,
+    data: {
+      period_start: string;
+      period_end: string;
+      opening_balance: number;
+      bill_amount: number;
+      description?: string;
+    },
+  ) => (await api.post(`/eb-accounts/${accountId}/bills`, data)).data,
+  updateBill: async (
+    billId: string,
+    data: Partial<
+      Pick<
+        EBBill,
+        | "period_start"
+        | "period_end"
+        | "opening_balance"
+        | "bill_amount"
+        | "description"
+      >
+    >,
+  ) => (await api.patch(`/eb-bills/${billId}`, data)).data,
+  addPayment: async (
+    billId: string,
+    data: { amount: number; payment_date: string; payment_method?: string },
+  ): Promise<EBPayment> =>
+    (await api.post(`/eb-bills/${billId}/payments`, data)).data,
+  updatePayment: async (
+    paymentId: string,
+    data: { amount?: number; payment_date?: string; payment_method?: string },
+  ): Promise<EBPayment> =>
+    (await api.patch(`/eb-payments/${paymentId}`, data)).data,
+  approve: async (requestId: string) =>
+    (await api.post(`/approvals/${requestId}/approve`)).data,
 };
 
-// Documents API
-export const documentsAPI = {
-  getDocuments: async (month?: number, year?: number): Promise<Document[]> => {
-    const params = new URLSearchParams();
-    if (month) params.append("month", month.toString());
-    if (year) params.append("year", year.toString());
-
-    const response = await api.get(`/documents?${params.toString()}`);
-    return response.data;
-  },
-
-  uploadDocument: async (
-    file: File,
-    title: string,
-    expenseId?: string,
-    month?: number,
-    year?: number
-  ): Promise<Document> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title);
-    if (expenseId) formData.append("expense_id", expenseId);
-    if (month) formData.append("month", month.toString());
-    if (year) formData.append("year", year.toString());
-
-    const response = await api.post("/documents/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  },
-
-  downloadDocument: async (id: string): Promise<Blob> => {
-    const response = await api.get(`/documents/${id}/download`, {
-      responseType: "blob",
-    });
-    return response.data;
-  },
-};
-
-// Analytics API
-export const analyticsAPI = {
-  getExpenseAnalytics: async (year?: number): Promise<any> => {
-    const params = new URLSearchParams();
-    if (year) params.append("year", year.toString());
-
-    const response = await api.get(`/analytics/expenses?${params.toString()}`);
-    return response.data;
-  },
+export const approvalsAPI = {
+  getPending: async (): Promise<PendingApproval[]> =>
+    (await api.get("/approvals/pending")).data,
+  approve: async (requestId: string): Promise<{ status: string }> =>
+    (await api.post(`/approvals/${requestId}/approve`)).data,
 };
 
 export default api;

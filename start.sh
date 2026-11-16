@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Start AMS Project
+# Start Kootukudil
 
-echo "Starting AMS (Apartment Management System)..."
+echo "Starting Kootukudil..."
 
 # Start Backend
 echo "Starting FastAPI backend..."
@@ -14,7 +14,7 @@ BACKEND_PID=$!
 sleep 3
 
 # Start Frontend
-echo "Starting Next.js frontend..."
+echo "Starting React web frontend..."
 cd ../frontend
 npm run dev &
 FRONTEND_PID=$!

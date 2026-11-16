@@ -1,76 +1,38 @@
-# AMS (Apartment Management System)
+# Kootukudil
 
-A comprehensive apartment management system to track expenses, payments, and documents.
+Kootukudil is a multi-apartment management application. The current implementation focuses on internal accounts, apartment/flat memberships and approvals, and Common/Individual EB bill and payment management.
 
-## Project Structure
+## Project layout
 
+```text
+backend/   FastAPI API and MongoDB domain services
+frontend/  React + Vite web client
+mobile/    Expo + React Native app for Android and iOS-ready development
 ```
-ams-project/
-├── frontend/   ← Next.js (Admin & User UI)
-├── backend/    ← FastAPI (APIs, MongoDB integration)
-├── README.md
-```
 
-## Features
+## Stack
 
-### Admin Features
+- Web: React 18, TypeScript, Vite, React Router, Tailwind CSS
+- Mobile: React Native, Expo SDK 58, Expo Router, SecureStore
+- API: Python, FastAPI, Pydantic 2, Motor, MongoDB
+- Authentication: Internal email/password, bcrypt, signed JWT
+- Mobile Android distribution: Expo Application Services (EAS)
 
-- Enter monthly apartment expenses (EB bills, etc.)
-- Track payment details (name, date, amount)
-- View monthly and yearly expense charts
-- Upload and manage documents
-- Filter expenses by month/year
+## Local setup
 
-### User Features
-
-- View apartment expenses
-- Check payment status (paid/unpaid)
-- View payment dates
-- Access monthly and yearly expense charts
-- Download EB bills and documents
-
-## Tech Stack
-
-### Frontend
-
-- **Next.js** - React framework
-- **Chart.js/Recharts** - Data visualization
-- **Tailwind CSS** - Styling
+Copy `.env.example` to `backend/.env` and configure `MONGODB_URL` and a strong `JWT_SECRET_KEY`. The configured MongoDB database name defaults to `kootukudil`. Never commit credentials.
 
 ### Backend
 
-- **FastAPI** - Python web framework
-- **MongoDB** - Database
-- **Pydantic** - Data validation
-- **JWT** - Authentication
-
-## Database Setup
-
-- **Connection**: See `.env.example` for configuration template
-- **Database**: `ams`
-- **Collections**: `users`, `expenses`, `payments`, `documents`
-
-## Getting Started
-
-### Quick Start
-
 ```bash
-# Clone the repository
-git clone https://github.com/mrsathishe/ams.git
-cd ams
-
-# Start both services
-chmod +x start.sh
-./start.sh
+cd backend
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
-**Access the application:**
+API documentation: `http://localhost:8001/docs`.
 
-- Frontend: http://localhost:3002
-- Backend API: http://localhost:8001
-- API Docs: http://localhost:8001/docs
-
-### Frontend Setup
+### Web
 
 ```bash
 cd frontend
@@ -78,39 +40,38 @@ npm install
 npm run dev
 ```
 
-### Backend Setup
+Web development URL: `http://localhost:3001`.
+
+### Mobile
 
 ```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+cd mobile
+nvm use 22
+cp .env.example .env
+npm install
+npm start
 ```
 
-## Current Status
+For an Android emulator, the default API address is `http://10.0.2.2:8001`. For a physical device, set `EXPO_PUBLIC_API_URL` to the host computer's LAN address. See [mobile/README.md](mobile/README.md) for APK build setup.
 
-✅ **Complete and Running**
+The repository-level `start.sh` starts the backend and web frontend. It does not start the mobile development server.
 
-- Backend API with all endpoints
-- Frontend with admin and user dashboards
-- Database integration with MongoDB
-- Authentication and authorization
-- Expense and payment tracking
-- Document upload/download
-- Charts and analytics
-- Responsive UI design
+## Initial Super Admin
 
-## First Time Setup
+There is no public Super Admin registration or bootstrap endpoint. A developer must create an account through internal registration and manually set `is_super_admin: true` on that user document in MongoDB. Ordinary registration cannot set this flag.
 
-1. **Access**: Go to http://localhost:3002
-2. **Register**: Create your first user account
-3. **Admin Access**: Update user role to "admin" in MongoDB
-4. **Start Using**: Add expenses, record payments, upload documents
+New apartment and membership requests are pending until an eligible approver approves them. Pending users cannot access protected EB APIs.
 
-## Authentication
+## EB behavior
 
-- Single Sign-On (SSO) implementation
-- Redirects to `http://localhost:3001` after login/register
+Bills belong to an EB account, not directly to a user. Common EB is apartment-scoped; Individual EB is flat-scoped and must be enabled for that flat. Payments are separate records linked to a bill and include payer and payment date. The backend derives previous balance, total payable, amount paid, closing balance, and payment status.
 
-## GitHub Repository
+The backend is authoritative for apartment/flat scope, membership permissions, approvals, payment ownership, and balance validation. Audit logs and backup/recovery are not part of this phase.
 
-https://github.com/mrsathishe/ams.git
+## Validation
+
+```bash
+cd backend && .venv/bin/python -m compileall -q app
+cd ../frontend && npx tsc --noEmit && npm run build
+cd ../mobile && nvm use 22 && npm run lint && npm run typecheck
+```

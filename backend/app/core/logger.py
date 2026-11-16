@@ -15,7 +15,7 @@ def log_execution_time(func):
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
             start_time = time.perf_counter()
-            logger.info(f"==> Entering: {func.__name__} with args: {args}, kwargs: {kwargs}")
+            logger.info("==> Entering: %s", func.__name__)
             try:
                 result = await func(*args, **kwargs)
                 elapsed = time.perf_counter() - start_time
@@ -38,7 +38,7 @@ def log_execution_time(func):
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs):
             start_time = time.perf_counter()
-            logger.info(f"==> Entering: {func.__name__} with args: {args}, kwargs: {kwargs}")
+            logger.info("==> Entering: %s", func.__name__)
             try:
                 result = func(*args, **kwargs)
                 elapsed = time.perf_counter() - start_time

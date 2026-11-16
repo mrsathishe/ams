@@ -1,185 +1,60 @@
-# AMS Setup and Usage Guide
+# Kootukudil Setup
 
-## What's Running
+## Prerequisites
 
-3. After successful registration, you'll be redirected to http://localhost:3001✅ **Backend API**: http://localhost:8001 (FastAPI)
-   ✅ **Frontend**: http://localhost:3002 (Next.js)
+- Python and a MongoDB connection string
+- Node.js 20+ for the Vite web app
+- Node.js 22.13+ for Expo SDK 58 (`nvm use 22`)
+- Android Studio/Android SDK for local Android builds, or an Expo/EAS account for cloud APK builds
 
-## Current Setup Status
+## Environment
 
-The AMS (Apartment Management System) has been successfully set up with:
+Copy `.env.example` to `backend/.env`. Set `MONGODB_URL` and a strong `JWT_SECRET_KEY` (at least 32 bytes). `MONGODB_DB_NAME` defaults to `kootukudil`; `CORS_ORIGINS` defaults to the local web origin `http://localhost:3001`.
 
-### Backend Features ✅
+The backend uses environment-provided database and JWT settings and fails startup when the required MongoDB URL or JWT secret is missing/weak. Do not commit `.env`.
 
-- FastAPI server running on port 8000
-- MongoDB connection configured
-- Authentication system with JWT
-- User management (admin/user roles)
-- Expense tracking
-- Payment recording
-- Document upload/download
-- Analytics and charts data API
+## Start services
 
-### Frontend Features ✅
-
-- Next.js application running on port 3002
-- Login/Register pages
-- Admin dashboard
-- User dashboard
-- Expense charts and analytics
-- Document management
-- Responsive design with Tailwind CSS
-
-## Getting Started
-
-### 1. Access the Application
-
-Open your browser and go to: http://localhost:3002
-
-You'll see the AMS landing page with two options:
-
-- **Sign In**: Redirects to http://localhost:3001 (external sign-in system)
-- **Register**: Creates a new user account in the AMS system
-
-### 2. User Registration
-
-1. Click "Register" on the landing page
-2. Fill in your details (name, email, password)
-3. After successful registration, you'll be redirected to http://localhost:3001
-4. **Important**: New users are created with "user" role by default
-
-### 3. Admin Setup
-
-To create an admin user, you have two options:
-
-- **Option 1**: Register as a user, then manually update the role to "admin" in MongoDB
-- **Option 2**: Modify the registration code to create admin users directly
-
-### 3. MongoDB Database
-
-The system connects to:
-
-- **Connection**: Configure in `.env` file (see `.env.example` for template)
-- **Database**: `ams`
-- **Collections**: `users`, `expenses`, `payments`, `documents`
-
-### 4. Admin Functions
-
-Once you have admin access, you can:
-
-- Add monthly expenses (EB bills, maintenance, etc.)
-- Record payments from residents
-- Upload documents (bills, receipts)
-- View analytics and charts
-- Manage all apartment expenses
-
-### 5. User Functions
-
-Regular users can:
-
-- View apartment expenses
-- Check their payment status
-- See payment history
-- Download documents
-- View expense charts
-
-## API Documentation
-
-The FastAPI backend provides automatic API documentation at:
-
-- **Swagger UI**: http://localhost:8001/docs
-- **ReDoc**: http://localhost:8001/redoc
-
-## Key Features Implemented
-
-### Authentication & Authorization
-
-- JWT-based authentication
-- Role-based access (admin/user)
-- Secure password hashing
-
-### Expense Management
-
-- Monthly expense tracking
-- Multiple expense types (EB, Water, Maintenance, etc.)
-- Payment recording with user details
-- Balance calculations
-
-### Document Management
-
-- File upload for bills and documents
-- Download functionality
-- Document categorization by month/year
-
-### Analytics & Charts
-
-- Monthly and yearly expense visualization
-- Payment status tracking
-- Chart.js integration for data visualization
-
-### Frontend UI
-
-- Clean, responsive design
-- Separate dashboards for admin and users
-- Real-time data updates
-- Form validation and error handling
-
-## Development Commands
-
-### Backend
+Backend:
 
 ```bash
 cd backend
-uvicorn app.main:app --reload
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
-### Frontend
+Web frontend, in another terminal:
 
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-### Both Services
+Mobile app, in another terminal:
 
 ```bash
-./start.sh
+cd mobile
+nvm use 22
+cp .env.example .env
+npm install
+npm start
 ```
 
-## Environment Variables
+Android emulator uses `http://10.0.2.2:8001`. A physical phone must use the development computer's LAN IP in `EXPO_PUBLIC_API_URL` and be able to reach port `8001`.
 
-The system uses these key configurations:
+## First administrator
 
-- MongoDB connection string (in `backend/config.py`)
-- JWT secret key
-- CORS settings for frontend integration
+Register through Kootukudil, then manually set `is_super_admin: true` for the intended user document in MongoDB. There is deliberately no public administrator registration or bootstrap route.
 
-## Next Steps
+## APK
 
-1. **Create Admin User**: Register and update role in database
-2. **Add Expense Data**: Start adding monthly apartment expenses
-3. **Register Users**: Add other apartment residents as users
-4. **Upload Documents**: Add EB bills and other documents
-5. **Test Features**: Explore all admin and user features
+From `mobile/`, sign in to EAS and run:
 
-## Troubleshooting
+```bash
+nvm use 22
+npx eas-cli login
+npm run android:apk
+```
 
-### Backend Issues
-
-- Check MongoDB connection
-- Verify all Python dependencies are installed
-- Check if port 8000 is available
-
-### Frontend Issues
-
-- Ensure Node.js and npm are installed
-- Check if ports 3000-3002 are available
-- Verify API connection to backend
-
-### Database Issues
-
-- Verify MongoDB connection string
-- Check network connectivity
-- Ensure database permissions
-
-The AMS system is now fully functional and ready for use!
+The `preview` EAS profile creates an installable APK. iOS packaging/distribution is deferred. See [mobile/README.md](mobile/README.md) for more details.

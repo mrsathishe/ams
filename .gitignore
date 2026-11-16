@@ -53,6 +53,7 @@ ENV/
 # Package manager files
 package-lock.json
 yarn.lock
+!mobile/package-lock.json
 
 # Database files
 *.db

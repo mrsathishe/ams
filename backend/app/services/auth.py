@@ -3,14 +3,15 @@ from app.core.security import verify_password
 from app.services.user_service import get_user_by_email
 
 async def authenticate_user(email: str, password: str):
-    user = await get_user_by_email(email)
+    normalized_email = email.strip().lower()
+    user = await get_user_by_email(normalized_email)
     if not user:
-        print(f"Authentication failed: User with email {email} not found.")
         return False
-    # Get the user from DB to access password
+    if not user.is_active:
+        return False
+
     db = get_database()
-    user_data = await db.users.find_one({"email": email})
+    user_data = await db.users.find_one({"email": normalized_email})
     if not user_data or not verify_password(password, user_data["password"]):
-        print(f"Authentication failed: Invalid password for user {email}.")
         return False
     return user
