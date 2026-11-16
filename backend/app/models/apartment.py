@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, model_validator
 class Apartment(BaseModel):
     id: str
     name: str | None = None
-    total_flat_count: int = Field(ge=1)
+    total_flat_count: int = Field(ge=0)
     flat_count: int = 0
     status: Literal["pending", "active", "suspended"] = "pending"
     created_by: str
@@ -17,6 +17,7 @@ class Apartment(BaseModel):
 class Flat(BaseModel):
     id: str
     apartment_id: str
+    building_id: str | None = None
     name: str = Field(min_length=1, max_length=80)
     individual_eb_enabled: bool = False
     tenant_membership_approval: Literal["owner", "tenant", "owner_or_tenant"] = "owner"

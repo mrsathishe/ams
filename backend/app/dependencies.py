@@ -85,7 +85,7 @@ async def get_approved_user(
 
 
 async def get_admin_user(
-    current_user: User = Depends(get_approved_user),
+    current_user: User = Depends(get_current_active_user),
 ) -> User:
     if not current_user.is_super_admin:
         raise HTTPException(

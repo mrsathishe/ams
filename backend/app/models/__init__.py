@@ -16,6 +16,14 @@ from app.models.membership import (
 	MembershipSummary,
 	RegistrationRequest,
 )
+from app.models.community import (
+	Community,
+	CommunityCreate,
+	CommunityUpdate,
+	Building,
+	BuildingCreate,
+	BuildingUpdate,
+)
 from app.models.eb import (
 	EBAccount,
 	EBAccountCreate,

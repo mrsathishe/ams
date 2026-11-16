@@ -1,15 +1,14 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useAuth } from "../../lib/auth";
-import { apartmentsAPI, approvalsAPI, ebAPI } from "../../lib/api";
-import { apiErrorMessage } from "../../lib/api-error";
-import {
-  EBAccount,
-  EBBill,
-  EBPayment,
-  Flat,
-  PendingApproval,
-} from "../../types";
-import ApartmentManagement from "./ApartmentManagement";
+import { useAuth } from "@/lib/auth";
+import { apartmentsAPI } from "@/lib/api/apartmentsApi";
+import { ebAPI } from "@/lib/api/ebApi";
+import { approvalsAPI } from "@/lib/api/approvalsApi";
+import { apiErrorMessage } from "@/lib/api/apiError";
+import { EBAccount, EBBill, EBPayment, Flat, PendingApproval } from "@/types";
+import ApartmentManagement from "@/Pages/ApartmentManagement";
+import CommunityManagement from "@/Pages/CommunityManagement";
+import Header from "./Header";
+import Sidebar, { NavSection } from "./Sidebar";
 
 const money = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -17,7 +16,7 @@ const money = new Intl.NumberFormat("en-IN", {
   maximumFractionDigits: 2,
 });
 
-export default function EBDashboard() {
+export default function Dashboard() {
   const {
     user,
     apartments,
@@ -26,6 +25,10 @@ export default function EBDashboard() {
     refreshUser,
     logout,
   } = useAuth();
+
+  const [activeNav, setActiveNav] = useState<NavSection>("eb");
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   const [accounts, setAccounts] = useState<EBAccount[]>([]);
   const [flats, setFlats] = useState<Flat[]>([]);
   const [approvals, setApprovals] = useState<PendingApproval[]>([]);
@@ -37,6 +40,7 @@ export default function EBDashboard() {
   const [showBillForm, setShowBillForm] = useState(false);
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [showApartmentManagement, setShowApartmentManagement] = useState(false);
+  const [showCommunityManagement, setShowCommunityManagement] = useState(false);
   const [paymentBillId, setPaymentBillId] = useState("");
   const [editingPayment, setEditingPayment] = useState<EBPayment | null>(null);
   const [editingBill, setEditingBill] = useState<EBBill | null>(null);
@@ -297,343 +301,350 @@ export default function EBDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Kootukudil
-            </p>
-            <h1 className="mt-1 text-xl font-semibold">Electricity bills</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            {apartments.length > 1 && (
-              <label className="sr-only" htmlFor="activeApartment">
-                Current apartment
-              </label>
-            )}
-            {apartments.length > 0 && (
-              <select
-                id="activeApartment"
-                value={activeApartmentId || ""}
-                onChange={(event) => selectApartment(event.target.value)}
-                className="max-w-xs rounded border border-gray-300 bg-white px-3 py-2 text-sm"
-              >
-                {apartments.map((apartment) => (
-                  <option key={apartment.id} value={apartment.id}>
-                    {apartment.name || `Apartment ${apartment.id.slice(-6)}`}
-                  </option>
-                ))}
-              </select>
-            )}
-            <span className="hidden text-sm text-gray-600 sm:inline">
-              {user?.name}
-            </span>
-            <button
-              type="button"
-              onClick={logout}
-              className="rounded border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
-            >
-              Log out
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+      <Header
+        user={user}
+        apartments={apartments}
+        activeApartmentId={activeApartmentId}
+        onSelectApartment={selectApartment}
+        approvals={approvals}
+        onToggleMobileSidebar={() =>
+          setIsMobileSidebarOpen(!isMobileSidebarOpen)
+        }
+        onOpenCommunity={() => setShowCommunityManagement(true)}
+        onNavigateProfile={() => setActiveNav("profile")}
+        onLogout={logout}
+      />
 
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        {!activeApartmentId && (
-          <p className="border-l-4 border-amber-500 bg-white p-4 text-sm">
-            No approved apartment is available for this account yet.
-          </p>
-        )}
-        {error && (
-          <p
-            role="alert"
-            className="mb-4 border-l-4 border-red-600 bg-white p-3 text-sm text-red-700"
-          >
-            {error}
-          </p>
-        )}
-        {message && (
-          <p
-            role="status"
-            className="mb-4 border-l-4 border-emerald-700 bg-white p-3 text-sm text-emerald-800"
-          >
-            {message}
-          </p>
-        )}
+      <div className="flex flex-1">
+        <Sidebar
+          activeNav={activeNav}
+          onSelectNav={(nav) => {
+            setActiveNav(nav);
+            if (nav === "community") setShowCommunityManagement(true);
+          }}
+          isOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        />
 
-        {approvals.length > 0 && (
-          <section className="mb-6 border border-gray-200 bg-white">
-            <div className="border-b border-gray-200 px-4 py-3">
-              <h2 className="font-semibold">Requests awaiting your approval</h2>
-            </div>
-            <ul className="divide-y divide-gray-100">
-              {approvals.map((item) => (
-                <li
-                  key={`${item.type}-${item.id}`}
-                  className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {item.name} · {item.relationship}
-                      {item.flat_name ? ` · Flat ${item.flat_name}` : ""}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {item.apartment_name} · {item.type.replace(/_/g, " ")}
-                      {item.required_approvals
-                        ? ` · ${item.approved_count || 0}/${item.required_approvals} approvals`
-                        : ""}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => approveRequest(item)}
-                    className="rounded border border-emerald-700 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-                  >
-                    Approve
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-4">
-          <div>
-            <h2 className="font-semibold">
-              {selectedAccount?.name || "EB accounts"}
-            </h2>
-            <p className="mt-1 text-sm text-gray-600">
-              {selectedAccount?.account_type === "common"
-                ? "Shared by members of this apartment"
-                : "Private to the selected flat"}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {accounts.length > 0 && (
-              <select
-                aria-label="EB account"
-                value={accountId}
-                onChange={(event) => setAccountId(event.target.value)}
-                className="rounded border border-gray-300 bg-white px-3 py-2 text-sm"
-              >
-                {accounts.map((account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
-            )}
-            {canManageApartment && activeApartmentId && (
-              <button
-                type="button"
-                onClick={() => setShowApartmentManagement(true)}
-                className="rounded border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
-              >
-                Members &amp; settings
-              </button>
-            )}
-            {canAddEB && (
-              <button
-                type="button"
-                onClick={() => setShowAccountForm(true)}
-                className="rounded bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800"
-              >
-                Add EB account
-              </button>
-            )}
-            {canAddEB && accounts.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setShowBillForm(true)}
-                className="rounded border border-emerald-700 px-3 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
-              >
-                Add bill
-              </button>
-            )}
-          </div>
-        </div>
-
-        {isLoading ? (
-          <p className="py-10 text-center text-sm text-gray-600">
-            Loading EB accounts...
-          </p>
-        ) : accounts.length === 0 ? (
-          <p className="py-10 text-center text-sm text-gray-600">
-            No EB accounts have been set up for this apartment.
-          </p>
-        ) : bills.length === 0 ? (
-          <p className="py-10 text-center text-sm text-gray-600">
-            No bills have been recorded for this account.
-          </p>
-        ) : (
-          <div className="space-y-5">
-            {bills.map((bill) => (
-              <article
-                key={bill.id}
-                className="border border-gray-200 bg-white"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-200 px-4 py-4">
-                  <div>
-                    <h3 className="font-semibold">{formatPeriod(bill)}</h3>
-                    {bill.description && (
-                      <p className="mt-1 text-sm text-gray-600">
-                        {bill.description}
-                      </p>
-                    )}
-                  </div>
-                  <span
-                    className={`rounded px-2 py-1 text-xs font-semibold ${bill.payment_status === "Paid" ? "bg-emerald-100 text-emerald-800" : bill.payment_status === "Partially Paid" ? "bg-amber-100 text-amber-900" : "bg-rose-100 text-rose-800"}`}
-                  >
-                    {bill.payment_status}
-                  </span>
-                </div>
-                <dl className="grid grid-cols-2 gap-4 px-4 py-4 sm:grid-cols-5">
-                  <Metric
-                    label="Current bill"
-                    value={money.format(bill.bill_amount)}
-                  />
-                  <Metric
-                    label="Previous balance"
-                    value={money.format(bill.previous_balance)}
-                  />
-                  <Metric
-                    label="Total payable"
-                    value={money.format(bill.total_payable)}
-                  />
-                  <Metric
-                    label="Total paid"
-                    value={money.format(bill.total_paid)}
-                  />
-                  <Metric
-                    label="Remaining"
-                    value={money.format(bill.closing_balance)}
-                    emphasis
-                  />
-                </dl>
-                <p className="px-4 pb-4 text-xs text-gray-500">
-                  Total payable = previous balance + current bill. Total paid is
-                  the sum of payment entries; remaining balance = total payable
-                  − total paid.
+        <main className="flex-1 overflow-x-hidden">
+          {activeNav === "eb" ? (
+            <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+              {!activeApartmentId && (
+                <p className="border-l-4 border-amber-500 bg-white p-4 text-sm">
+                  No approved apartment is available for this account yet.
                 </p>
-                <div className="border-t border-gray-200 px-4 py-4">
-                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold">Payments</h4>
-                    <div className="flex gap-2">
-                      {bill.closing_balance > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPaymentBillId(bill.id);
-                            setPaymentForm({
-                              amount: "",
-                              payment_date: new Date()
-                                .toISOString()
-                                .slice(0, 10),
-                              payment_method: "",
-                            });
-                          }}
-                          className="rounded border border-emerald-700 px-3 py-1.5 text-sm text-emerald-800 hover:bg-emerald-50"
-                        >
-                          Record payment
-                        </button>
-                      )}
-                      {(user?.is_super_admin ||
-                        activeMembership?.relationship === "Owner") && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingBill(bill);
-                            setBillForm({
-                              period_start: bill.period_start,
-                              period_end: bill.period_end,
-                              opening_balance: String(bill.opening_balance),
-                              bill_amount: String(bill.bill_amount),
-                              description: bill.description || "",
-                            });
-                          }}
-                          className="rounded border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
-                        >
-                          Request bill edit
-                        </button>
-                      )}
-                    </div>
+              )}
+              {error && (
+                <p
+                  role="alert"
+                  className="mb-4 border-l-4 border-red-600 bg-white p-3 text-sm text-red-700"
+                >
+                  {error}
+                </p>
+              )}
+              {message && (
+                <p
+                  role="status"
+                  className="mb-4 border-l-4 border-emerald-700 bg-white p-3 text-sm text-emerald-800"
+                >
+                  {message}
+                </p>
+              )}
+
+              {approvals.length > 0 && (
+                <section className="mb-6 border border-gray-200 bg-white">
+                  <div className="border-b border-gray-200 px-4 py-3">
+                    <h2 className="font-semibold">
+                      Requests awaiting your approval
+                    </h2>
                   </div>
-                  {bill.payments.length === 0 ? (
-                    <p className="text-sm text-gray-500">
-                      No payments recorded.
-                    </p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full min-w-[500px] text-left text-sm">
-                        <thead className="text-xs uppercase text-gray-500">
-                          <tr>
-                            <th className="py-2 pr-3">Paid by</th>
-                            <th className="py-2 pr-3">Amount</th>
-                            <th className="py-2 pr-3">Date</th>
-                            <th className="py-2">Method</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {bill.payments.map((payment) => (
-                            <tr
-                              key={payment.id}
-                              className="border-t border-gray-100"
-                            >
-                              <td className="py-2 pr-3">
-                                {payment.payer_name}
-                              </td>
-                              <td className="py-2 pr-3">
-                                {money.format(payment.amount)}
-                              </td>
-                              <td className="py-2 pr-3">
-                                {new Date(
-                                  payment.payment_date,
-                                ).toLocaleDateString()}
-                              </td>
-                              <td className="py-2">
-                                {payment.payment_method || "—"}
-                              </td>
-                              <td className="py-2 text-right">
-                                {payment.paid_by === user?.id && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setEditingPayment(payment);
-                                      setPaymentBillId(payment.bill_id);
-                                      setPaymentForm({
-                                        amount: String(payment.amount),
-                                        payment_date: new Date(
-                                          payment.payment_date,
-                                        )
-                                          .toISOString()
-                                          .slice(0, 10),
-                                        payment_method:
-                                          payment.payment_method || "",
-                                      });
-                                    }}
-                                    className="text-xs font-medium text-emerald-800 underline"
-                                  >
-                                    Edit
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                  <ul className="divide-y divide-gray-100">
+                    {approvals.map((item) => (
+                      <li
+                        key={`${item.type}-${item.id}`}
+                        className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+                      >
+                        <div>
+                          <p className="font-medium">
+                            {item.name} · {item.relationship}
+                            {item.flat_name ? ` · Flat ${item.flat_name}` : ""}
+                          </p>
+                          <p className="mt-1 text-sm text-gray-600">
+                            {item.apartment_name} ·{" "}
+                            {item.type.replace(/_/g, " ")}
+                            {item.required_approvals
+                              ? ` · ${item.approved_count || 0}/${item.required_approvals} approvals`
+                              : ""}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => approveRequest(item)}
+                          className="rounded border border-emerald-700 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+                        >
+                          Approve
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-4">
+                <div>
+                  <h2 className="font-semibold">
+                    {selectedAccount?.name || "EB accounts"}
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-600">
+                    {selectedAccount?.account_type === "common"
+                      ? "Shared by members of this apartment"
+                      : "Private to the selected flat"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {accounts.length > 0 && (
+                    <select
+                      aria-label="EB account"
+                      value={accountId}
+                      onChange={(event) => setAccountId(event.target.value)}
+                      className="rounded border border-gray-300 bg-white px-3 py-2 text-sm"
+                    >
+                      {accounts.map((account) => (
+                        <option key={account.id} value={account.id}>
+                          {account.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {canManageApartment && activeApartmentId && (
+                    <button
+                      type="button"
+                      onClick={() => setShowApartmentManagement(true)}
+                      className="rounded border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
+                    >
+                      Members &amp; settings
+                    </button>
+                  )}
+                  {canAddEB && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAccountForm(true)}
+                      className="rounded bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+                    >
+                      Add EB account
+                    </button>
+                  )}
+                  {canAddEB && accounts.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowBillForm(true)}
+                      className="rounded border border-emerald-700 px-3 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50"
+                    >
+                      Add bill
+                    </button>
                   )}
                 </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
+              </div>
 
+              {isLoading ? (
+                <p className="py-10 text-center text-sm text-gray-600">
+                  Loading EB accounts...
+                </p>
+              ) : accounts.length === 0 ? (
+                <p className="py-10 text-center text-sm text-gray-600">
+                  No EB accounts have been set up for this apartment.
+                </p>
+              ) : bills.length === 0 ? (
+                <p className="py-10 text-center text-sm text-gray-600">
+                  No bills have been recorded for this account.
+                </p>
+              ) : (
+                <div className="space-y-5">
+                  {bills.map((bill) => (
+                    <article
+                      key={bill.id}
+                      className="border border-gray-200 bg-white"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-200 px-4 py-4">
+                        <div>
+                          <h3 className="font-semibold">
+                            {formatPeriod(bill)}
+                          </h3>
+                          {bill.description && (
+                            <p className="mt-1 text-sm text-gray-600">
+                              {bill.description}
+                            </p>
+                          )}
+                        </div>
+                        <span
+                          className={`rounded px-2 py-1 text-xs font-semibold ${bill.payment_status === "Paid" ? "bg-emerald-100 text-emerald-800" : bill.payment_status === "Partially Paid" ? "bg-amber-100 text-amber-900" : "bg-rose-100 text-rose-800"}`}
+                        >
+                          {bill.payment_status}
+                        </span>
+                      </div>
+                      <dl className="grid grid-cols-2 gap-4 px-4 py-4 sm:grid-cols-5">
+                        <Metric
+                          label="Current bill"
+                          value={money.format(bill.bill_amount)}
+                        />
+                        <Metric
+                          label="Previous balance"
+                          value={money.format(bill.previous_balance)}
+                        />
+                        <Metric
+                          label="Total payable"
+                          value={money.format(bill.total_payable)}
+                        />
+                        <Metric
+                          label="Total paid"
+                          value={money.format(bill.total_paid)}
+                        />
+                        <Metric
+                          label="Remaining"
+                          value={money.format(bill.closing_balance)}
+                          emphasis
+                        />
+                      </dl>
+                      <p className="px-4 pb-4 text-xs text-gray-500">
+                        Total payable = previous balance + current bill. Total
+                        paid is the sum of payment entries; remaining balance =
+                        total payable − total paid.
+                      </p>
+                      <div className="border-t border-gray-200 px-4 py-4">
+                        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                          <h4 className="text-sm font-semibold">Payments</h4>
+                          <div className="flex gap-2">
+                            {bill.closing_balance > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPaymentBillId(bill.id);
+                                  setPaymentForm({
+                                    amount: "",
+                                    payment_date: new Date()
+                                      .toISOString()
+                                      .slice(0, 10),
+                                    payment_method: "",
+                                  });
+                                }}
+                                className="rounded border border-emerald-700 px-3 py-1.5 text-sm text-emerald-800 hover:bg-emerald-50"
+                              >
+                                Record payment
+                              </button>
+                            )}
+                            {(user?.is_super_admin ||
+                              activeMembership?.relationship === "Owner") && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingBill(bill);
+                                  setBillForm({
+                                    period_start: bill.period_start,
+                                    period_end: bill.period_end,
+                                    opening_balance: String(
+                                      bill.opening_balance,
+                                    ),
+                                    bill_amount: String(bill.bill_amount),
+                                    description: bill.description || "",
+                                  });
+                                }}
+                                className="rounded border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
+                              >
+                                Request bill edit
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        {bill.payments.length === 0 ? (
+                          <p className="text-sm text-gray-500">
+                            No payments recorded.
+                          </p>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <table className="w-full min-w-[500px] text-left text-sm">
+                              <thead className="text-xs uppercase text-gray-500">
+                                <tr>
+                                  <th className="py-2 pr-3">Paid by</th>
+                                  <th className="py-2 pr-3">Amount</th>
+                                  <th className="py-2 pr-3">Date</th>
+                                  <th className="py-2">Method</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {bill.payments.map((payment) => (
+                                  <tr
+                                    key={payment.id}
+                                    className="border-t border-gray-100"
+                                  >
+                                    <td className="py-2 pr-3">
+                                      {payment.payer_name}
+                                    </td>
+                                    <td className="py-2 pr-3">
+                                      {money.format(payment.amount)}
+                                    </td>
+                                    <td className="py-2 pr-3">
+                                      {new Date(
+                                        payment.payment_date,
+                                      ).toLocaleDateString()}
+                                    </td>
+                                    <td className="py-2">
+                                      {payment.payment_method || "—"}
+                                    </td>
+                                    <td className="py-2 text-right">
+                                      {payment.paid_by === user?.id && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setEditingPayment(payment);
+                                            setPaymentBillId(payment.bill_id);
+                                            setPaymentForm({
+                                              amount: String(payment.amount),
+                                              payment_date: new Date(
+                                                payment.payment_date,
+                                              )
+                                                .toISOString()
+                                                .slice(0, 10),
+                                              payment_method:
+                                                payment.payment_method || "",
+                                            });
+                                          }}
+                                          className="text-xs font-medium text-emerald-800 underline"
+                                        >
+                                          Edit
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : (
+            <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+              <div className="rounded-lg border border-gray-200 bg-white p-6">
+                <h2 className="text-lg font-semibold capitalize text-gray-900">
+                  {activeNav}
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  {activeNav} section content goes here.
+                </p>
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
+
+      {/* Modals */}
       {(showAccountForm || showBillForm || paymentBillId || editingBill) && (
-        <div className="fixed inset-0 z-10 grid place-items-center overflow-y-auto bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/40 p-4">
           <section className="my-6 w-full max-w-lg border border-gray-200 bg-white p-5 shadow-lg">
             {showAccountForm ? (
               <form className="space-y-4" onSubmit={submitAccount}>
@@ -857,6 +868,7 @@ export default function EBDashboard() {
           </section>
         </div>
       )}
+
       {showApartmentManagement && activeApartmentId && user && (
         <ApartmentManagement
           apartmentId={activeApartmentId}
@@ -868,7 +880,15 @@ export default function EBDashboard() {
           }}
         />
       )}
-    </main>
+      {showCommunityManagement && (
+        <CommunityManagement
+          onClose={() => {
+            setShowCommunityManagement(false);
+            void refreshUser();
+          }}
+        />
+      )}
+    </div>
   );
 }
 

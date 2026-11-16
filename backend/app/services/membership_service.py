@@ -65,9 +65,9 @@ def eligible_relationships(membership: dict, flat: dict) -> list[str]:
         return ["Owner"]
     policy = flat.get("tenant_membership_approval", "owner")
     if policy == "tenant":
-        return ["Tenant"]
+        return ["Tenant", "Rental"]
     if policy == "owner_or_tenant":
-        return ["Owner", "Tenant"]
+        return ["Owner", "Tenant", "Rental"]
     return ["Owner"]
 
 
@@ -237,7 +237,7 @@ async def update_membership_permissions(
         )
         if not requester_membership:
             raise HTTPException(status_code=403, detail="Only a same-flat Owner can grant permissions")
-        if target["relationship"] != "Tenant":
+        if target["relationship"] not in {"Tenant", "Rental"}:
             raise HTTPException(status_code=403, detail="Owners cannot change another Owner's permissions")
         if "can_manage_apartment" in updates:
             raise HTTPException(status_code=403, detail="Only a Super Admin can grant apartment management")

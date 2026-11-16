@@ -8,7 +8,8 @@ import {
   ReactNode,
 } from "react";
 import { Apartment, LoginCredentials, RegisterData, User } from "../types";
-import { apartmentsAPI, authAPI } from "../lib/api";
+import { apartmentsAPI } from "./api/apartmentsApi";
+import { authAPI } from "./api/authApi";
 
 interface AuthContextType {
   user: User | null;

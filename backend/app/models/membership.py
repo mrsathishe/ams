@@ -1,37 +1,24 @@
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field
+
+Relationship = Literal["Owner", "Tenant", "Rental"]
 
 
 class RegistrationRequest(BaseModel):
     email: EmailStr
     name: str = Field(min_length=1, max_length=100)
+    phone_number: str = Field(
+        min_length=7,
+        max_length=20,
+        pattern=r"^\+?[0-9][0-9\s()-]{5,18}[0-9]$|^\+?[0-9]{7,15}$",
+    )
     password: str = Field(min_length=8, max_length=72)
-    relationship: Literal["Owner", "Tenant"]
-    apartment_id: str | None = None
-    apartment_name: str | None = Field(default=None, max_length=120)
-    total_flat_count: int | None = Field(default=None, ge=1, le=500)
-    flat_id: str | None = None
-    flat_name: str | None = Field(default=None, max_length=80)
-
-    @model_validator(mode="after")
-    def validate_apartment_and_flat(self):
-        if self.apartment_id:
-            if self.total_flat_count is not None:
-                raise ValueError("total_flat_count is only for a new apartment")
-            if self.flat_id and self.flat_name:
-                raise ValueError("Choose an existing flat or enter a new flat name")
-            if not self.flat_id and not self.flat_name:
-                raise ValueError("Select a flat or enter a new flat name")
-        else:
-            if self.flat_id:
-                raise ValueError("flat_id requires an existing apartment")
-            if self.total_flat_count is None:
-                raise ValueError("total_flat_count is required for a new apartment")
-            if not self.flat_name:
-                raise ValueError("flat_name is required for a new apartment")
-        return self
+    relationship: Literal["Owner", "Rental"]
+    community_id: str
+    building_id: str
+    flat_number: str = Field(min_length=1, max_length=80)
 
 
 class MembershipPermissions(BaseModel):
@@ -47,7 +34,7 @@ class MembershipSummary(BaseModel):
     apartment_name: str
     flat_id: str
     flat_name: str
-    relationship: Literal["Owner", "Tenant"]
+    relationship: Relationship
     status: Literal["pending", "approved", "rejected"]
     permissions: MembershipPermissions = Field(default_factory=MembershipPermissions)
     approval_required_by: str = "Owner"
@@ -60,7 +47,7 @@ class Membership(BaseModel):
     user_id: str
     apartment_id: str
     flat_id: str
-    relationship: Literal["Owner", "Tenant"]
+    relationship: Relationship
     status: Literal["pending", "approved", "rejected"] = "pending"
     permissions: MembershipPermissions = Field(default_factory=MembershipPermissions)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -81,6 +68,6 @@ class MembershipView(BaseModel):
     apartment_id: str
     flat_id: str
     flat_name: str
-    relationship: Literal["Owner", "Tenant"]
+    relationship: Relationship
     status: Literal["pending", "approved", "rejected"]
     permissions: MembershipPermissions = Field(default_factory=MembershipPermissions)

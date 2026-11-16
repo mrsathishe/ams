@@ -34,6 +34,8 @@ API docs are at `http://localhost:8001/docs`.
 
 - `POST /register`, `POST /token`, `GET /users/me`: internal account creation, login, and profile.
 - `GET /apartments/registration-options`, `GET /apartments`: registration discovery and approved apartments for the current user.
+- `GET /communities`, `GET /communities/{community_id}/buildings`: public registration choices.
+- Super Admin community management: `GET /communities/manage`, `POST /communities`, `PATCH|DELETE /communities/{community_id}`, `POST /communities/{community_id}/buildings`, and `PATCH|DELETE /communities/buildings/{building_id}`.
 - `/apartments/{apartment_id}/flats`, `/memberships`, `/change-requests`: scoped flat/member administration and apartment change requests.
 - `/memberships/pending-approvals`, `/memberships/{id}/approve`, `/memberships/{id}/permissions`: membership review and grants.
 - `/approvals/pending`, `/approvals/{request_id}/approve`: scoped approval inbox and dispatch.
@@ -44,7 +46,11 @@ Protected apartment data requests include `X-Apartment-ID`; the backend verifies
 
 ## Data and calculations
 
-Collections: `users`, `apartments`, `flats`, `memberships`, `approval_requests`, `eb_accounts`, `eb_bills`, and `eb_payments`.
+Collections: `users`, `apartments` (communities), `buildings`, `flats`, `memberships`, `approval_requests`, `eb_accounts`, `eb_bills`, and `eb_payments`.
+
+Community management stores the hierarchy as Community (`apartments`) → Building (`buildings`) → Flat/Unit (`flats`). Building unit capacity is configured by a Super Admin. A flat record is created on the first successful registration for its entered unit number; later residents selecting that same community, building, and unit share the flat record while receiving their own membership. Deleting a community or building is rejected while memberships or related EB/approval records are associated.
+
+On startup, existing apartment and flat documents are migrated idempotently: legacy flats are attached to a `Main Building`, capacities and flat counts are retained, and the community is marked with hierarchy version 2. Existing memberships, account IDs, and EB records remain unchanged. Existing user profiles may have no `phone_number`; new registrations require and store one. Existing `Tenant` membership values remain supported, while the registration form now stores `Rental`.
 
 Common EB belongs to an apartment; Individual EB belongs to one flat. The first bill's opening balance is used as its previous balance. Later bills carry forward the preceding bill's closing balance. `total_paid` is the sum of linked payment records; closing balance and Pending/Partially Paid/Paid status are computed by the service. Overpayments are rejected, and users may update only their own payment records.
 

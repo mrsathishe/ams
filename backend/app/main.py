@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import ALLOWED_ORIGINS, UPLOAD_DIR, validate_settings
 from app.core.database import close_mongo_connection, connect_to_mongo
-from app.routers import approvals, apartments, auth, eb, memberships, users
+from app.routers import approvals, apartments, auth, communities, eb, memberships, users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,6 +35,7 @@ async def root():
     return {"message": "Kootukudil API is running"}
 
 app.include_router(auth.router)
+app.include_router(communities.router)
 app.include_router(apartments.router)
 app.include_router(approvals.router)
 app.include_router(eb.router)

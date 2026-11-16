@@ -6,6 +6,7 @@ from app.models.membership import MembershipSummary
 class UserBase(BaseModel):
     email: EmailStr
     name: str = Field(min_length=1, max_length=100)
+    phone_number: str | None = None
 
 class UserCreate(UserBase):
     password: str = Field(min_length=8, max_length=128)

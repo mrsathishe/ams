@@ -69,11 +69,11 @@ async def get_membership_approver_info(membership: dict, flat: dict) -> tuple[st
         relationships = ["Owner"]
         required_by = "Owner"
     elif policy == "tenant":
-        relationships = ["Tenant"]
-        required_by = "Tenant"
+        relationships = ["Tenant", "Rental"]
+        required_by = "Rental"
     elif policy == "owner_or_tenant":
-        relationships = ["Owner", "Tenant"]
-        required_by = "Owner or Tenant"
+        relationships = ["Owner", "Tenant", "Rental"]
+        required_by = "Owner or Rental"
     else:
         relationships = ["Owner"]
         required_by = "Owner"

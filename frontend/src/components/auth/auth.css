@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .input-field {
+    @apply mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700;
+  }
+
+  .button {
+    @apply w-full rounded-md bg-emerald-700 py-2.5 px-4 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-50;
+  }
+
+  .error-message {
+    @apply rounded-md bg-red-50 p-3 text-sm text-red-700;
+  }
+
+  .phone-input-field {
+    @apply mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700;
+  }
+
+  .property-details-fields {
+    @apply mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700;
+  }
+
+  .password-input-field {
+    @apply block w-full rounded-md border-0 border-r-[0.1rem] border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .login-form-input {
+    @apply mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700;
+  }
+
+  .auth-page-wrapper {
+    @apply min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8;
+  }
+
+  .auth-form-container {
+    @apply max-w-md w-full space-y-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm;
+  }
+
+  .auth-tab-button {
+    @apply rounded-md px-3 py-2 text-sm font-medium transition-all;
+  }
+
+  .active {
+    @apply bg-emerald-700 text-white shadow-sm;
+  }
+
+  .not-active {
+    @apply text-gray-600 hover:bg-gray-100;
+  }
+
+  .title1 {
+    @apply text-sm font-semibold uppercase tracking-wide text-emerald-700;
+  }
+
+  .title2 {
+    @apply mt-2 text-3xl font-extrabold text-gray-900;
+  }
+
+  .subtitle {
+    @apply mt-1 text-sm text-gray-600;
+  }
+
+  .auth-tab-wrapper {
+    @apply grid grid-cols-2 rounded-lg border border-gray-200 bg-gray-50 p-1;
+  }
+
+  .register-form {
+    @apply mt-6 space-y-4;
+  }
+
+  .relation-field-text {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .building-error {
+    @apply mt-1 text-sm text-red-700;
+  }
+
+  .community-error {
+    @apply mt-1 text-sm text-red-700;
+  }
+  .relation-field-buttons {
+    @apply mt-2 grid grid-cols-2 gap-2;
+  }
+  .relation-field-button {
+    @apply rounded-md border px-3 py-2 text-sm font-medium transition-all;
+  }
+  .relation-field-button-active {
+    @apply border-emerald-700 bg-emerald-50 text-emerald-900 shadow-sm;
+  }
+  .relation-field-button-not-active {
+    @apply border-gray-300 text-gray-600 hover:bg-gray-50;
+  }
+
+  .password-input-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .password-input-error {
+    @apply mt-1 text-sm text-red-700;
+  }
+
+  .password-input-container {
+    @apply mt-1 flex rounded-md border border-gray-300 focus-within:border-emerald-700 focus-within:ring-1 focus-within:ring-emerald-700;
+  }
+
+  .password-input-button {
+    @apply px-3 text-sm text-gray-600 hover:text-gray-900;
+  }
+
+  .login-form {
+    @apply mt-6 space-y-4;
+  }
+
+  .change-password {
+    @apply text-sm font-medium text-emerald-700 hover:underline;
+  }
+}

@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
-import { apartmentsAPI } from "../../lib/api";
-import { apiErrorMessage } from "../../lib/api-error";
-import { ApartmentMember, Flat, User } from "../../types";
+import { apartmentsAPI } from "@/lib/api/apartmentsApi";
+import { apiErrorMessage } from "@/lib/api/apiError";
+import { ApartmentMember, Flat, User } from "@/types";
 
 interface ApartmentManagementProps {
   apartmentId: string;
@@ -109,7 +109,7 @@ export default function ApartmentManagement({
             : item,
         ),
       );
-      onStatus("Tenant approval policy updated.");
+      onStatus("Rental approval policy updated.");
     } catch (error: unknown) {
       onStatus(
         apiErrorMessage(error, "Could not update the approval policy."),
@@ -195,7 +195,7 @@ export default function ApartmentManagement({
                           user.is_super_admin ||
                           (activeMembership?.relationship === "Owner" &&
                             activeMembership.flat_id === member.flat_id &&
-                            member.relationship === "Tenant");
+                            ["Tenant", "Rental"].includes(member.relationship));
                         const canSetApartmentPermission =
                           user.is_super_admin &&
                           member.relationship === "Owner";
@@ -312,7 +312,7 @@ export default function ApartmentManagement({
                           Individual EB enabled
                         </label>
                         <label className="text-sm">
-                          Tenant membership approval
+                          Rental membership approval
                           <select
                             value={flat.tenant_membership_approval}
                             disabled={!canManageFlat}
@@ -326,9 +326,9 @@ export default function ApartmentManagement({
                             className="mt-1 block w-full rounded border border-gray-300 bg-white px-2 py-1.5 disabled:bg-gray-100"
                           >
                             <option value="owner">Owner</option>
-                            <option value="tenant">Tenant</option>
+                            <option value="tenant">Rental</option>
                             <option value="owner_or_tenant">
-                              Owner or Tenant
+                              Owner or Rental
                             </option>
                           </select>
                         </label>

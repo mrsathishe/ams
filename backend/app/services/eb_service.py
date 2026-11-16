@@ -327,7 +327,7 @@ async def update_eb_bill(bill_id: str, changes: EBBillChange, user: User) -> dic
         if account.get("flat_id"):
             owner_query["flat_id"] = account["flat_id"]
         if not await db.memberships.find_one(owner_query):
-            raise HTTPException(status_code=403, detail="Tenants cannot edit EB bills")
+            raise HTTPException(status_code=403, detail="Renters cannot edit EB bills")
     change_data = changes.model_dump(mode="json", exclude_unset=True)
     if "opening_balance" in change_data:
         first_bill = await db.eb_bills.find_one(

@@ -2,45 +2,97 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../lib/auth";
-import { apartmentsAPI, authAPI } from "../../lib/api";
-import { apiErrorMessage } from "../../lib/api-error";
-import { ApartmentRegistrationOption, RegisterData } from "../../types";
+import { useAuth } from "@/lib/auth";
+import { authAPI } from "@/lib/api/authApi";
+import { communitiesAPI } from "@/lib/api/communitesApi";
+import { apiErrorMessage } from "@/lib/api/apiError";
+import { Building, Community, RegisterData } from "@/types";
 import ChangePasswordModal from "../components/ChangePasswordModal";
+import SearchableDropdown from "../components/SearchableDropdown";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showChangePasswordModal, setShowChangePasswordModal] =
-    useState(false);
-  const [apartments, setApartments] = useState<ApartmentRegistrationOption[]>(
-    [],
-  );
-  const [apartmentChoice, setApartmentChoice] = useState("new");
-  const [flatChoice, setFlatChoice] = useState("new");
-  const [apartmentName, setApartmentName] = useState("");
-  const [totalFlatCount, setTotalFlatCount] = useState("");
-  const [flatName, setFlatName] = useState("");
-  const [relationship, setRelationship] = useState<"Owner" | "Tenant">("Owner");
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [communityId, setCommunityId] = useState("");
+  const [buildingId, setBuildingId] = useState("");
+  const [flatNumber, setFlatNumber] = useState("");
+  const [relationship, setRelationship] = useState<"Owner" | "Rental">("Owner");
+  const [communityLoadError, setCommunityLoadError] = useState("");
+  const [buildingLoadError, setBuildingLoadError] = useState("");
+  const [isLoadingCommunities, setIsLoadingCommunities] = useState(true);
+  const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    apartmentsAPI
-      .getRegistrationOptions()
-      .then(setApartments)
-      .catch(() => setApartments([]));
+    communitiesAPI
+      .getCommunities()
+      .then(setCommunities)
+      .catch((requestError: unknown) =>
+        setCommunityLoadError(
+          apiErrorMessage(requestError, "Could not load communities."),
+        ),
+      )
+      .finally(() => setIsLoadingCommunities(false));
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (!communityId) {
+      setBuildings([]);
+      setBuildingId("");
+      setBuildingLoadError("");
+      setIsLoadingBuildings(false);
+      return;
+    }
+    setBuildings([]);
+    setBuildingId("");
+    setBuildingLoadError("");
+    setIsLoadingBuildings(true);
+    communitiesAPI
+      .getBuildings(communityId)
+      .then((items) => {
+        if (active) {
+          setBuildings(items);
+          setBuildingId("");
+        }
+      })
+      .catch((requestError: unknown) => {
+        if (active) {
+          setBuildings([]);
+          setBuildingLoadError(
+            apiErrorMessage(requestError, "Could not load buildings."),
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoadingBuildings(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [communityId]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
+    if (isRegistering && (!communityId || !buildingId || !flatNumber.trim())) {
+      setError(
+        "Select a community and building, then enter your flat or unit number.",
+      );
+      return;
+    }
 
     if (isRegistering && password !== confirmPassword) {
       setError("Passwords do not match");
@@ -53,21 +105,13 @@ export default function LoginPage() {
       const registrationData: RegisterData = {
         email,
         name,
+        phone_number: phoneNumber,
         password,
         relationship,
+        community_id: communityId,
+        building_id: buildingId,
+        flat_number: flatNumber.trim(),
       };
-      if (apartmentChoice === "new") {
-        registrationData.apartment_name = apartmentName.trim() || undefined;
-        registrationData.total_flat_count = Number(totalFlatCount);
-        registrationData.flat_name = flatName.trim();
-      } else {
-        registrationData.apartment_id = apartmentChoice;
-        if (flatChoice === "new") {
-          registrationData.flat_name = flatName.trim();
-        } else {
-          registrationData.flat_id = flatChoice;
-        }
-      }
 
       const currentUser = isRegistering
         ? await register(registrationData)
@@ -190,120 +234,35 @@ export default function LoginPage() {
               />
             </div>
             {isRegistering && (
+              <div>
+                <label
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Phone number
+                </label>
+                <input
+                  id="phoneNumber"
+                  name="phone_number"
+                  type="tel"
+                  autoComplete="tel"
+                  required
+                  minLength={7}
+                  maxLength={20}
+                  value={phoneNumber}
+                  onChange={(event) => setPhoneNumber(event.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
+                />
+              </div>
+            )}
+            {isRegistering && (
               <>
-                <div>
-                  <label
-                    htmlFor="apartment"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Apartment
-                  </label>
-                  <select
-                    id="apartment"
-                    value={apartmentChoice}
-                    onChange={(event) => {
-                      setApartmentChoice(event.target.value);
-                      setFlatChoice("new");
-                    }}
-                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
-                  >
-                    <option value="new">Add a new apartment</option>
-                    {apartments.map((apartment) => (
-                      <option key={apartment.id} value={apartment.id}>
-                        {apartment.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {apartmentChoice === "new" ? (
-                  <>
-                    <div>
-                      <label
-                        htmlFor="apartmentName"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Apartment name (optional)
-                      </label>
-                      <input
-                        id="apartmentName"
-                        value={apartmentName}
-                        onChange={(event) =>
-                          setApartmentName(event.target.value)
-                        }
-                        maxLength={120}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="flatCount"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Total flats
-                      </label>
-                      <input
-                        id="flatCount"
-                        type="number"
-                        min="1"
-                        max="500"
-                        required
-                        value={totalFlatCount}
-                        onChange={(event) =>
-                          setTotalFlatCount(event.target.value)
-                        }
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <div>
-                    <label
-                      htmlFor="flat"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Flat
-                    </label>
-                    <select
-                      id="flat"
-                      value={flatChoice}
-                      onChange={(event) => setFlatChoice(event.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
-                    >
-                      <option value="new">Add a flat</option>
-                      {apartments
-                        .find((apartment) => apartment.id === apartmentChoice)
-                        ?.flats.map((flat) => (
-                          <option key={flat.id} value={flat.id}>
-                            {flat.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                )}
-                {(apartmentChoice === "new" || flatChoice === "new") && (
-                  <div>
-                    <label
-                      htmlFor="flatName"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Flat name or number
-                    </label>
-                    <input
-                      id="flatName"
-                      required
-                      value={flatName}
-                      onChange={(event) => setFlatName(event.target.value)}
-                      maxLength={80}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
-                    />
-                  </div>
-                )}
                 <fieldset>
                   <legend className="block text-sm font-medium text-gray-700">
                     Relationship to this flat
                   </legend>
                   <div className="mt-2 grid grid-cols-2 gap-2">
-                    {(["Owner", "Tenant"] as const).map((value) => (
+                    {(["Owner", "Rental"] as const).map((value) => (
                       <button
                         key={value}
                         type="button"
@@ -316,6 +275,91 @@ export default function LoginPage() {
                     ))}
                   </div>
                 </fieldset>
+                <SearchableDropdown
+                  id="community"
+                  label="Community / Apartment"
+                  options={communities.map((community) => ({
+                    id: community.id,
+                    label: community.name,
+                  }))}
+                  value={communityId}
+                  onChange={(id) => {
+                    setCommunityId(id);
+                    setBuildingId("");
+                    setFlatNumber("");
+                  }}
+                  placeholder="Search communities"
+                />
+                {communityLoadError && (
+                  <p role="alert" className="text-sm text-red-700">
+                    {communityLoadError}
+                  </p>
+                )}
+                {isLoadingCommunities && (
+                  <p className="text-sm text-gray-500">
+                    Loading communities...
+                  </p>
+                )}
+                {!isLoadingCommunities &&
+                  !communityLoadError &&
+                  communities.length === 0 && (
+                    <p className="text-sm text-gray-500">
+                      No communities are configured yet. Contact a Super Admin.
+                    </p>
+                  )}
+                <SearchableDropdown
+                  key={`building-${communityId}`}
+                  id="building"
+                  label="Building / Block"
+                  options={buildings.map((building) => ({
+                    id: building.id,
+                    label: building.name,
+                  }))}
+                  value={buildingId}
+                  onChange={(id) => {
+                    setBuildingId(id);
+                    setFlatNumber("");
+                  }}
+                  placeholder={
+                    communityId
+                      ? "Search buildings"
+                      : "Select a community first"
+                  }
+                  disabled={!communityId}
+                />
+                {buildingLoadError && (
+                  <p role="alert" className="text-sm text-red-700">
+                    {buildingLoadError}
+                  </p>
+                )}
+                {isLoadingBuildings && (
+                  <p className="text-sm text-gray-500">Loading buildings...</p>
+                )}
+                {communityId &&
+                  !isLoadingBuildings &&
+                  buildings.length === 0 &&
+                  !buildingLoadError && (
+                    <p className="text-sm text-gray-500">
+                      No buildings are configured for this community yet.
+                    </p>
+                  )}
+                <div>
+                  <label
+                    htmlFor="flatNumber"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Flat / Unit name or number
+                  </label>
+                  <input
+                    id="flatNumber"
+                    name="flat_number"
+                    required
+                    maxLength={80}
+                    value={flatNumber}
+                    onChange={(event) => setFlatNumber(event.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-700"
+                  />
+                </div>
               </>
             )}
             <div>

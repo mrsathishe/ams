@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "@/lib/auth";
 
 export default function PendingApprovalPage() {
   const { user, refreshUser, logout } = useAuth();

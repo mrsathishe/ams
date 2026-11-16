@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  phone_number?: string | null;
   is_active: boolean;
   is_super_admin: boolean;
   approval_status: "pending" | "approved";
@@ -15,7 +16,7 @@ export interface MembershipSummary {
   apartment_name: string;
   flat_id: string;
   flat_name: string;
-  relationship: "Owner" | "Tenant";
+  relationship: "Owner" | "Tenant" | "Rental";
   status: "pending" | "approved" | "rejected";
   approval_required_by: string;
   eligible_approver_names: string[];
@@ -52,7 +53,7 @@ export interface ApartmentMember {
   apartment_id: string;
   flat_id: string;
   flat_name: string;
-  relationship: "Owner" | "Tenant";
+  relationship: "Owner" | "Tenant" | "Rental";
   status: "pending" | "approved" | "rejected";
   permissions: {
     can_view_common_eb: boolean;
@@ -67,6 +68,24 @@ export interface ApartmentRegistrationOption {
   name: string;
   total_flat_count: number;
   flats: { id: string; name: string }[];
+}
+
+export interface Community {
+  id: string;
+  name: string;
+  status: "pending" | "active" | "suspended";
+  total_building_count: number;
+  total_flat_count: number;
+  created_at: string;
+}
+
+export interface Building {
+  id: string;
+  community_id: string;
+  name: string;
+  total_flat_count: number;
+  flat_count: number;
+  created_at: string;
 }
 
 export interface Expense {
@@ -117,13 +136,12 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   name: string;
+  phone_number: string;
   password: string;
-  relationship: "Owner" | "Tenant";
-  apartment_id?: string;
-  apartment_name?: string;
-  total_flat_count?: number;
-  flat_id?: string;
-  flat_name?: string;
+  relationship: "Owner" | "Rental";
+  community_id: string;
+  building_id: string;
+  flat_number: string;
 }
 
 export interface EBAccount {
@@ -171,7 +189,7 @@ export interface PendingApproval {
   type: "membership" | "apartment_change" | "eb_bill_create" | "eb_bill_update";
   apartment_id: string;
   name: string;
-  relationship: "Owner" | "Tenant";
+  relationship: "Owner" | "Tenant" | "Rental";
   flat_name: string;
   apartment_name: string;
   changes?: Record<string, unknown>;

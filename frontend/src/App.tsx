@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import PendingApprovalPage from "./pages/PendingApprovalPage";
-import EBDashboard from "./pages/EBDashboard";
-import { AuthProvider, useAuth } from "../lib/auth";
+import AuthPage from "@/pages/AuthPage";
+import PendingApprovalPage from "@/pages/PendingApprovalPage";
+import Dashboard from "@/pages/Dashboard";
+import { AuthProvider, useAuth } from "@/lib/auth";
 
 function AuthRoutes() {
   const { user, isLoading } = useAuth();
@@ -33,7 +33,7 @@ function AuthRoutes() {
           user ? (
             <Navigate to={authenticatedDestination} replace />
           ) : (
-            <LoginPage />
+            <AuthPage />
           )
         }
       />
@@ -63,7 +63,7 @@ function AuthRoutes() {
         path="/dashboard"
         element={
           user && !isPending ? (
-            <EBDashboard />
+            <Dashboard />
           ) : (
             <Navigate to={authenticatedDestination} replace />
           )
@@ -73,7 +73,7 @@ function AuthRoutes() {
         path="/admin"
         element={
           user?.is_super_admin ? (
-            <EBDashboard />
+            <Dashboard />
           ) : (
             <Navigate to={authenticatedDestination} replace />
           )
